@@ -14,7 +14,7 @@ public class I18n
 {
     /* https://docs.godotengine.org/en/stable/tutorials/i18n/locales.html */
     public const string LocalizedResourcesPath = "res://nova/resources/localized_resources/";
-    public const string LocalizedStringsPath = "res://nova/resources/localized_strings/";
+    public const string LocalizedStringsPath = "res://nova/resources/localized_resources/localized_strings/";
 
     public static readonly string[] SupportedLocales = ["zh", "en"];
 
