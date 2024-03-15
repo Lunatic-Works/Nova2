@@ -1,16 +1,17 @@
 using Godot;
+
 namespace Nova;
 
 public partial class I18nText : Label
 {
     [Export]
-    public string inflateTextKey;
+    public string InflateTextKey;
 
-    private Label text;
+    private Label _text;
 
     public override void _EnterTree()
     {
-        text = GetNode<Label>("../Label");
+        _text = GetNode<Label>("../Label");
 
         UpdateText();
         I18n.LocaleChanged += UpdateText;
@@ -23,8 +24,8 @@ public partial class I18nText : Label
 
     private void UpdateText()
     {
-        string str = I18n.__(inflateTextKey);
+        var str = I18n.__(InflateTextKey);
 
-        if (text != null) text.Text = str;
+        if (_text != null) _text.Text = str;
     }
 }

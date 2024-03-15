@@ -7,7 +7,6 @@ using System.Linq;
 namespace Nova;
 
 using LocalizedStrings = Dictionary<string, string>;
-
 using TranslationBundle = Dictionary<string, object>;
 
 public class I18n
@@ -20,35 +19,35 @@ public class I18n
 
     public static string DefaultLocale => SupportedLocales[0];
 
-    private static string _currentLocale = OS.GetLocaleLanguage();
+    private static string s_currentLocale = OS.GetLocaleLanguage();
 
     public static event Action LocaleChanged;
 
     public static string CurrentLocale
     {
-        get => _currentLocale;
+        get => s_currentLocale;
         set
         {
-            if (_currentLocale == value)
+            if (s_currentLocale == value)
             {
                 return;
             }
 
-            _currentLocale = value;
+            s_currentLocale = value;
             LocaleChanged.Invoke();
         }
     }
 
-    private static bool Inited;
+    private static bool s_inited;
 
     private static void Init()
     {
-        if (Inited) return;
+        if (s_inited) return;
         LoadTranslationBundles();
-        Inited = true;
+        s_inited = true;
     }
 
-    private static Dictionary<string, TranslationBundle> TranslationBundles = [];
+    private static readonly Dictionary<string, TranslationBundle> s_translationBundles = [];
 
     private static void LoadTranslationBundles()
     {
@@ -61,7 +60,7 @@ public class I18n
                 var err = FileAccess.GetOpenError();
                 GD.PrintErr(err);
             }
-            TranslationBundles[locale] = JsonConvert.DeserializeObject<TranslationBundle>(file.GetAsText());
+            s_translationBundles[locale] = JsonConvert.DeserializeObject<TranslationBundle>(file.GetAsText());
         }
     }
 
@@ -78,9 +77,9 @@ public class I18n
     {
         Init();
 
-        string translation = key;
+        var translation = key;
 
-        if (TranslationBundles[locale].TryGetValue(key, out var raw))
+        if (s_translationBundles[locale].TryGetValue(key, out var raw))
         {
             if (raw is string value)
             {
