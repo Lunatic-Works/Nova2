@@ -56,10 +56,13 @@ public partial class NovaController : Node
 
     public override void _EnterTree()
     {
+        Instance = this;
         AddObjs();
         foreach (var entry in _objects)
         {
             TryInit(entry.Key, entry.Value);
         }
     }
+
+    public static NovaController Instance { get; private set; }
 }
