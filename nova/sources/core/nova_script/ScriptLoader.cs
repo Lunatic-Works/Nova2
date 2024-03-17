@@ -215,6 +215,20 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
         _currentNode = null;
     }
 
+    private static ChoiceImageInformation? ConvertImageInfo(Variant entry)
+    {
+        if (entry.VariantType == Variant.Type.Nil)
+        {
+            return null;
+        }
+        var dict = entry.AsGodotDictionary();
+        var name = dict["name"].AsString();
+        var x = (float)dict.GetValueOrDefault("x", 0d).AsDouble();
+        var y = (float)dict.GetValueOrDefault("y", 0d).AsDouble();
+        var scale = (float)dict.GetValueOrDefault("scale", 1d).AsDouble();
+        return new() { Name = name, PositionX = x, PositionY = y, Scale = scale };
+    }
+
     /// <summary>
     /// Add a branch to the current node.
     /// The type of the current node will be switched to Branching.
@@ -226,7 +240,7 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
     /// <param name="imageInfo"></param>
     /// <param name="mode"></param>
     /// <param name="condition"></param>
-    public void RegisterBranch(string name, string destination, string text, ChoiceImageInformation? imageInfo,
+    public void RegisterBranch(string name, string destination, string text, Variant imageInfo,
         BranchMode mode, string condition)
     {
         if (string.IsNullOrEmpty(destination))
@@ -241,7 +255,7 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
                 _currentNode, $"destination: {destination}");
         }
 
-        if (mode == BranchMode.Jump && (text != null || imageInfo != null))
+        if (mode == BranchMode.Jump && (text != null || imageInfo.VariantType == Variant.Type.Nil))
         {
             throw new ScriptLoadingException("Branch mode is Jump but text or imageInfo is not null.",
                 _currentNode, $"destination: {destination}");
@@ -256,8 +270,8 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
         _currentNode.Type = FlowChartNodeType.Branching;
         var branch = new BranchInformation(name, text)
         {
-            ImageInfo = imageInfo, Mode = mode,
-            Condition = condition == null ? null : GDRuntime.CompileCondition(condition)
+            ImageInfo = ConvertImageInfo(imageInfo), Mode = mode,
+            Condition = string.IsNullOrEmpty(condition) ? null : GDRuntime.CompileCondition(condition)
         };
         _currentNode.AddBranch(branch);
         _lazyBindings.Add(new LazyBindingEntry
@@ -407,6 +421,11 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
                 catch (ParserException e)
                 {
                     throw new ParserException($"Failed to parse {fileName}", e);
+                }
+
+                if (_currentNode != null)
+                {
+                    SetCurrentAsEnd(null);
                 }
             }
         }

@@ -13,10 +13,10 @@ public enum BranchMode
 
 public readonly struct ChoiceImageInformation
 {
-    public readonly string Name;
-    public readonly float PositionX;
-    public readonly float PositionY;
-    public readonly float Scale;
+    public string Name { get; init; }
+    public float PositionX { get; init; }
+    public float PositionY { get; init; }
+    public float Scale { get; init; }
 }
 
 /// <summary>
