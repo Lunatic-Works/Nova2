@@ -1,4 +1,4 @@
-class_name ConditionBlock extends BaseBlock
+class_name ConditionBlock extends RuntimeBlock
 
 func __eval() -> bool:
     push_error("Must override __eval in child")
