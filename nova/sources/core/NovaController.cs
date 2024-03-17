@@ -73,7 +73,6 @@ public partial class NovaController : Node
         {
             TryInit(entry.Key, entry.Value);
         }
-
     }
 
     public static NovaController Instance { get; private set; }

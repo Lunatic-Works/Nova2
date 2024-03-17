@@ -56,4 +56,16 @@ public static class Utils
     {
         return HashList(list.Select(x => (ulong)x.GetHashCode()));
     }
+
+    public static SignalAwaiter WaitForSeconds(this Node node, double seconds)
+    {
+        var tree = node.GetTree();
+        var timer = tree.CreateTimer(seconds);
+        return node.ToSignal(timer, SceneTreeTimer.SignalName.Timeout);
+    }
+
+    public static SignalAwaiter WaitForSeconds(double seconds)
+    {
+        return WaitForSeconds(NovaController.Instance, seconds);
+    }
 }
