@@ -5,12 +5,13 @@ charset=utf-8
 end_of_line=lf
 indent_style=space
 
-[*.cs]
+[*.{cs,txt}]
 indent_size=4
 insert_final_newline=true
 tab_width=4
 trim_trailing_whitespace=true
 
+[*.cs]
 # dotnet naming styles
 dotnet_naming_style.camel_case_style.capitalization=camel_case
 dotnet_naming_style.pascal_case_style.capitalization=pascal_case
@@ -98,6 +99,11 @@ dotnet_naming_symbols.default_pascal_symbols.applicable_accessibilities=*
 dotnet_naming_symbols.default_pascal_symbols.applicable_kinds=namespace,class,struct,enum,delegate,type_parameter,local_function
 
 # end naming rules
+
+# dotnet formatting options
+dotnet_sort_system_directives_first=true
+dotnet_separate_import_directive_groups=false
+dotnet_style_allow_multiple_blank_lines_experimental=false
 
 # csharp formatting options
 csharp_space_after_cast=false
