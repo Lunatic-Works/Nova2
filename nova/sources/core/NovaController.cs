@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using Nova.Exceptions;
 
 namespace Nova;
 
@@ -16,9 +17,14 @@ public partial class NovaController : Node
     private readonly Dictionary<Type, ISingleton> _objects = [];
     private readonly Dictionary<Type, ObjectState> _states = [];
 
-    private void Add<T>() where T : ISingleton, new()
+    private void AddObj<T>() where T : ISingleton, new()
     {
-        _objects.Add(typeof(T), new T());
+        AddObj(new T());
+    }
+
+    private void AddObj<T>(T obj) where T : ISingleton
+    {
+        _objects.Add(typeof(T), obj);
         _states.Add(typeof(T), ObjectState.Uninitialized);
     }
 
@@ -26,11 +32,11 @@ public partial class NovaController : Node
     {
         if (!_states.TryGetValue(type, out var state))
         {
-            throw new InvalidOperationException($"Missing singleton {type}");
+            throw new InvalidAccessException($"Missing singleton {type}");
         }
         else if (state == ObjectState.Initializing)
         {
-            throw new InvalidOperationException("Circular dependency");
+            throw new InvalidAccessException("Circular dependency");
         }
         else if (state == ObjectState.Initialized)
         {
@@ -41,7 +47,12 @@ public partial class NovaController : Node
         _states[type] = ObjectState.Initialized;
     }
 
-    public T Get<T>() where T : ISingleton
+    public bool CheckInit<T>() where T : ISingleton
+    {
+        return _states.TryGetValue(typeof(T), out var state) && state == ObjectState.Initialized;
+    }
+
+    public T GetObj<T>() where T : ISingleton
     {
         var type = typeof(T);
         var obj = (T)_objects[type];
@@ -51,7 +62,7 @@ public partial class NovaController : Node
 
     private void AddObjs()
     {
-        // place singletons here
+        AddObj<ScriptLoader>();
     }
 
     public override void _EnterTree()
@@ -62,7 +73,10 @@ public partial class NovaController : Node
         {
             TryInit(entry.Key, entry.Value);
         }
+
     }
 
     public static NovaController Instance { get; private set; }
+
+    public ScriptLoader ScriptLoader => GetObj<ScriptLoader>();
 }

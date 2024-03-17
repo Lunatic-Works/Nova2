@@ -1,19 +1,18 @@
+using System;
+using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Godot;
-using System;
-using System.Linq;
 
 namespace Nova;
-
 using LocalizedStrings = Dictionary<string, string>;
 using TranslationBundle = Dictionary<string, object>;
 
 public class I18n
 {
     /* https://docs.godotengine.org/en/stable/tutorials/i18n/locales.html */
-    public const string LocalizedResourcesPath = "res://nova/resources/localized_resources/";
-    public const string LocalizedStringsPath = "res://nova/resources/localized_resources/localized_strings/";
+    public const string LocalizedResourcesPath = Utils.ResourceRoot + "localized_resources/";
+    public const string LocalizedStringsPath = LocalizedResourcesPath + "localized_strings/";
 
     public static readonly string[] SupportedLocales = ["zh", "en"];
 
@@ -54,13 +53,8 @@ public class I18n
         foreach (var locale in SupportedLocales)
         {
             var filePath = LocalizedStringsPath + locale + ".json";
-            using var file = FileAccess.Open(filePath, FileAccess.ModeFlags.Read);
-            if (file == null)
-            {
-                var err = FileAccess.GetOpenError();
-                GD.PrintErr(err);
-            }
-            s_translationBundles[locale] = JsonConvert.DeserializeObject<TranslationBundle>(file.GetAsText());
+            var translation = Utils.GetFileAsText(filePath);
+            s_translationBundles[locale] = JsonConvert.DeserializeObject<TranslationBundle>(translation);
         }
     }
 

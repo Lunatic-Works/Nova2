@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Nova.Parser;
-
-using AttributeDict = IReadOnlyDictionary<string, string>;
 using ParsedBlocks = IReadOnlyList<ParsedBlock>;
 using ParsedChunks = IReadOnlyList<IReadOnlyList<ParsedBlock>>;
 
@@ -16,29 +17,26 @@ public enum BlockType
     Separator
 }
 
-public class ParsedBlock(int line, BlockType type, string content, AttributeDict attributes)
+public readonly struct ParsedBlock(int line, BlockType type, string content,
+    IReadOnlyDictionary<string, string> attributes = null)
 {
     public readonly int Line = line;
     public readonly BlockType Type = type;
-    public readonly string Content = content?.Replace("\r", "");
-    public readonly AttributeDict Attributes = attributes;
+    public readonly string Content = content?.Replace("\r", "") ?? "";
+    public readonly IReadOnlyDictionary<string, string> Attributes = attributes ??
+        ImmutableDictionary<string, string>.Empty;
 
     public IEnumerable<object> ToList()
     {
         IEnumerable<object> ret = [Type, Content];
-        if (Attributes != null)
-        {
-            ret = ret.Concat(Attributes.OrderBy(x => x.Key).Cast<object>());
-        }
-
-        return ret;
+        return ret.Concat(Attributes.OrderBy(x => x.Key).Cast<object>());
     }
 }
 
-public static class Parser
+public static class NovaParser
 {
     private static ParsedBlock ParseCodeBlock(Tokenizer tokenizer, int line, BlockType type,
-        AttributeDict attributes)
+        IReadOnlyDictionary<string, string> attributes)
     {
         ParserException.ExpectToken(tokenizer.Peek, TokenType.BlockStart, "<|");
         var startToken = tokenizer.Peek;
@@ -237,7 +235,7 @@ public static class Parser
         // eat up the last newline
         tokenizer.ParseNext();
 
-        return new ParsedBlock(line, BlockType.Text, content, null);
+        return new ParsedBlock(line, BlockType.Text, content);
     }
 
     private static ParsedBlock ParseBlock(Tokenizer tokenizer)
@@ -252,7 +250,7 @@ public static class Parser
         {
             var content = tokenizer.SubString(startIndex, endIndex - startIndex);
             tokenizer.ParseNext();
-            return new ParsedBlock(line, BlockType.Separator, content, null);
+            return new ParsedBlock(line, BlockType.Separator, content);
         }
 
         if (tokenType == TokenType.At)
@@ -348,6 +346,91 @@ public static class Parser
     public static ParsedChunks ParseChunks(string text)
     {
         return SplitBlocksToChunks(ParseBlocks(text));
+    }
+
+    private static readonly Regex NameDialoguePattern =
+        new(@"^(?<name>[^/：:]*)(//(?<hidden>[^：:]*))?(：：|::)(?<dialogue>(.|\n)*)",
+            RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+
+    /// <remarks>
+    /// There can be multiple text blocks in a chunk. They are concatenated into one, separated by newlines
+    /// </remarks>
+    public static string GetText(ParsedBlocks chunk)
+    {
+        var sb = new StringBuilder();
+        var first = true;
+        foreach (var block in chunk)
+        {
+            if (block.Type == BlockType.Text)
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    sb.Append('\n');
+                }
+
+                sb.Append(block.Content);
+            }
+        }
+        return sb.ToString();
+    }
+
+    // Update hiddenNames in place
+    public static void ParseNameDialogue(string text, out string displayName, out string hiddenName,
+        out string dialogue, Dictionary<string, string> hiddenNames = null)
+    {
+        // Coarse test for performance
+        if (text.IndexOf("：：", StringComparison.Ordinal) < 0 && text.IndexOf("::", StringComparison.Ordinal) < 0)
+        {
+            displayName = "";
+            hiddenName = "";
+            dialogue = text;
+            return;
+        }
+
+        var m = NameDialoguePattern.Match(text);
+        if (m.Success)
+        {
+            displayName = m.Groups["name"].Value;
+            hiddenName = m.Groups["hidden"].Value;
+            dialogue = m.Groups["dialogue"].Value;
+        }
+        else
+        {
+            displayName = "";
+            hiddenName = "";
+            dialogue = text;
+        }
+
+        if (hiddenNames == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(hiddenName))
+        {
+            if (!string.IsNullOrEmpty(displayName))
+            {
+                if (hiddenNames.TryGetValue(displayName, out var name))
+                {
+                    hiddenName = name;
+                }
+                else
+                {
+                    hiddenName = displayName;
+                }
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(displayName))
+            {
+                hiddenNames[displayName] = hiddenName;
+            }
+        }
     }
 }
 

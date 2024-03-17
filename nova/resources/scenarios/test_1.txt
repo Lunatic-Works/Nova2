@@ -1,0 +1,12 @@
+@<|
+label('ch1', '第一章')
+is_unlocked_start()
+|>
+
+<|
+print("111")
+|>
+111
+
+222
+@<| is_end() |>
