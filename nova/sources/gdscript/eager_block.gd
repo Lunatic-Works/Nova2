@@ -8,6 +8,7 @@ static var _current_filename = null
 func action_new_file(filename: String) -> void:
     _current_filename = filename
     _last_display_name = null
+    print("Do eager block for file: " + filename)
 
 func _try_get_local_name(name):
     if name == null:

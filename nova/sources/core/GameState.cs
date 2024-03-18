@@ -68,6 +68,18 @@ public partial class GameState : RefCounted, ISingleton
 
     #endregion
 
+    public void OnEnter()
+    {
+        _flowChartGraph = NovaController.Instance.GetObj<ScriptLoader>().FlowChartGraph;
+    }
+
+    public void OnReady() { }
+
+    public void OnExit()
+    {
+        CancelCoroutine();
+    }
+
     private void StartCoroutine(Func<CancellationToken, Task> asyncFunc)
     {
         ResetCoroutineContext();
@@ -103,6 +115,11 @@ public partial class GameState : RefCounted, ISingleton
             ScriptLoader.AddDeferredDialogueChunks(node);
         }
         return node;
+    }
+
+    public IEnumerable<string> GetStartNodeNames(StartNodeType type)
+    {
+        return _flowChartGraph.GetStartNodeNames(type);
     }
 
     private void StartGame(FlowChartNode startNode)
@@ -319,16 +336,6 @@ public partial class GameState : RefCounted, ISingleton
         };
         // TODO
         return false;
-    }
-
-    public void OnEnter()
-    {
-        _flowChartGraph = NovaController.Instance.GetObj<ScriptLoader>().FlowChartGraph;
-    }
-
-    public void OnExit()
-    {
-        CancelCoroutine();
     }
 
     public static GameState Instance => NovaController.Instance.GetObj<GameState>();

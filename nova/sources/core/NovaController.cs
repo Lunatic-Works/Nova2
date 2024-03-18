@@ -20,6 +20,42 @@ public partial class NovaController : Node
     private readonly Dictionary<Type, ISingleton> _objects = [];
     private readonly Dictionary<Type, ObjectState> _states = [];
 
+    public override void _EnterTree()
+    {
+        Instance = this;
+        try
+        {
+            AddObjs();
+            foreach (var entry in _objects)
+            {
+                TryInit(entry.Key, entry.Value);
+            }
+        }
+        catch (Exception e)
+        {
+            GD.PushError(e);
+            Utils.Quit();
+        }
+    }
+
+    public override void _Ready()
+    {
+        foreach (var obj in _objects.Values)
+        {
+            obj.OnReady();
+        }
+    }
+
+    public override void _ExitTree()
+    {
+        foreach (var obj in _objects.Values)
+        {
+            obj.OnExit();
+        }
+        _objects.Clear();
+        _states.Clear();
+    }
+
     private void AddObj<T>() where T : ISingleton, new()
     {
         AddObj(new T());
@@ -46,6 +82,7 @@ public partial class NovaController : Node
             return;
         }
         _states[type] = ObjectState.Initializing;
+        GD.Print($"Start init: {type}");
         obj.OnEnter();
         _states[type] = ObjectState.Initialized;
     }
@@ -67,24 +104,7 @@ public partial class NovaController : Node
     {
         AddObj(new ScriptLoader(_scriptPath));
         AddObj<GameState>();
-    }
-
-    public override void _EnterTree()
-    {
-        Instance = this;
-        try
-        {
-            AddObjs();
-            foreach (var entry in _objects)
-            {
-                TryInit(entry.Key, entry.Value);
-            }
-        }
-        catch (Exception e)
-        {
-            GD.PushError(e);
-            Utils.Quit();
-        }
+        AddObj<ViewManager>();
     }
 
     public static NovaController Instance { get; private set; }
