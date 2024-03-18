@@ -17,7 +17,7 @@ public enum TokenType
     EndOfFile
 }
 
-public readonly struct Token
+public readonly struct Token()
 {
     public int Index { get; init; }
     public int Length { get; init; }

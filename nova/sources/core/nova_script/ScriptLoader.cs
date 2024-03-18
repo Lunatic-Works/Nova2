@@ -11,11 +11,7 @@ using ParsedChunks = IReadOnlyList<IReadOnlyList<ParsedBlock>>;
 
 public partial class ScriptLoader(string path) : RefCounted, ISingleton
 {
-    private const string DefaultPath = "scenarios";
-
     private readonly string _path = path;
-
-    public ScriptLoader() : this(DefaultPath) { }
 
     private readonly FlowChartGraph _flowChartGraph = new();
     public FlowChartGraph FlowChartGraph
@@ -30,7 +26,7 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
     private string _currentLocale;
     private FlowChartNode _currentNode;
 
-    private readonly struct LazyBindingEntry
+    private readonly struct LazyBindingEntry()
     {
         public FlowChartNode From { get; init; }
         public string Destination { get; init; }
@@ -173,7 +169,7 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
         var nextNode = new FlowChartNode(name);
         if (_currentNode != null && _currentNode.Type == FlowChartNodeType.Normal)
         {
-            _currentNode.AddBranch(new BranchInformation() { NextNode = nextNode });
+            _currentNode.AddBranch(new() { NextNode = nextNode });
         }
 
         _currentNode = nextNode;
@@ -274,7 +270,7 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
             Condition = string.IsNullOrEmpty(condition) ? null : GDRuntime.CompileCondition(condition)
         };
         _currentNode.AddBranch(branch);
-        _lazyBindings.Add(new LazyBindingEntry
+        _lazyBindings.Add(new()
         {
             From = _currentNode, Destination = destination,
             Branch = branch

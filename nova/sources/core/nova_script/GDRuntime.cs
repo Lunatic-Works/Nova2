@@ -55,4 +55,9 @@ public static class GDRuntime
     {
         return Compile(WrapExpression("ConditionBlock", expression));
     }
+
+    public static bool InvokeCondition(RefCounted script)
+    {
+        return script?.Call("run").AsBool() ?? true;
+    }
 }

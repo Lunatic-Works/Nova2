@@ -18,14 +18,14 @@ public enum StartNodeType
     All = Locked | Unlocked | Debug
 }
 
-public readonly struct StartNode
+public readonly struct StartNode()
 {
     public FlowChartNode Node { get; init; }
     public StartNodeType Type { get; init; }
     public string Name => Node.Name;
 }
 
-public readonly struct EndNode
+public readonly struct EndNode()
 {
     public FlowChartNode Node { get; init; }
     public string EndName { get; init; }
