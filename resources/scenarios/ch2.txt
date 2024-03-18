@@ -1,0 +1,12 @@
+@<|
+label("ch2", "第二章")
+is_unlocked_start()
+|>
+
+<|
+print("333")
+|>
+333
+
+444
+@<| is_end() |>

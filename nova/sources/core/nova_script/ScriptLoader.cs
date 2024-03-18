@@ -34,6 +34,59 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
     }
     private readonly List<LazyBindingEntry> _lazyBindings = [];
 
+    public void OnEnter()
+    {
+        _currentNode = null;
+        _currentLocale = I18n.DefaultLocale;
+
+        _flowChartGraph.Unfreeze();
+        _flowChartGraph.Clear();
+
+        foreach (var locale in I18n.SupportedLocales)
+        {
+            _currentLocale = locale;
+
+            var localizedPath = Utils.ResourceRoot + _path;
+            if (locale != I18n.DefaultLocale)
+            {
+                localizedPath = I18n.LocalizedResourcesPath + locale + "/" + _path;
+            }
+
+            if (!DirAccess.DirExistsAbsolute(localizedPath))
+            {
+                continue;
+            }
+
+            foreach (var fileName in DirAccess.GetFilesAt(localizedPath))
+            {
+                GDRuntime.BaseEagerBlock.Call("action_new_file", fileName);
+                var script = Utils.GetFileAsText(localizedPath + "/" + fileName);
+                try
+                {
+                    ParseScript(script, true);
+                }
+                catch (ParserException e)
+                {
+                    throw new ParserException($"Failed to parse {fileName}", e);
+                }
+
+                if (_currentNode != null)
+                {
+                    SetCurrentAsEnd(null);
+                }
+            }
+        }
+
+        BindAllLazyBindingEntries();
+
+        _flowChartGraph.SanityCheck();
+        _flowChartGraph.Freeze();
+    }
+
+    public void OnReady() { }
+
+    public void OnExit() { }
+
     private static void CheckInit()
     {
         Utils.RuntimeAssert(NovaController.Instance.CheckInit<ScriptLoader>(),
@@ -155,6 +208,8 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
 
     #region Methods called by external scripts
 
+    public bool IsDefaultLocale => _currentLocale == I18n.DefaultLocale;
+
     /// <summary>
     /// Create a new flow chart node register it to the current constructing FlowChartGraph.
     /// If the current node is a normal node, the newly created one is intended to be its
@@ -206,8 +261,9 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
         {
             throw new ScriptLoadingException("Cannot apply jump_to() to a branching node.", _currentNode);
         }
-
-        _lazyBindings.Add(new LazyBindingEntry { From = _currentNode, Destination = destination });
+        var branch = new BranchInformation();
+        _currentNode.AddBranch(branch);
+        _lazyBindings.Add(new() { From = _currentNode, Destination = destination, Branch = branch });
         _currentNode = null;
     }
 
@@ -379,58 +435,5 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
         _currentNode = null;
     }
 
-    public bool IsDefaultLocale => _currentLocale == I18n.DefaultLocale;
-
     #endregion
-
-    public void OnEnter()
-    {
-        _currentNode = null;
-        _currentLocale = I18n.DefaultLocale;
-
-        _flowChartGraph.Unfreeze();
-        _flowChartGraph.Clear();
-
-        foreach (var locale in I18n.SupportedLocales)
-        {
-            _currentLocale = locale;
-
-            var localizedPath = Utils.ResourceRoot + _path;
-            if (locale != I18n.DefaultLocale)
-            {
-                localizedPath = I18n.LocalizedResourcesPath + locale + "/" + _path;
-            }
-
-            if (!DirAccess.DirExistsAbsolute(localizedPath))
-            {
-                continue;
-            }
-
-            foreach (var fileName in DirAccess.GetFilesAt(localizedPath))
-            {
-                GDRuntime.BaseEagerBlock.Call("action_new_file", fileName);
-                var script = Utils.GetFileAsText(localizedPath + "/" + fileName);
-                try
-                {
-                    ParseScript(script, true);
-                }
-                catch (ParserException e)
-                {
-                    throw new ParserException($"Failed to parse {fileName}", e);
-                }
-
-                if (_currentNode != null)
-                {
-                    SetCurrentAsEnd(null);
-                }
-            }
-        }
-
-        BindAllLazyBindingEntries();
-
-        _flowChartGraph.SanityCheck();
-        _flowChartGraph.Freeze();
-    }
-
-    public void OnExit() { }
 }

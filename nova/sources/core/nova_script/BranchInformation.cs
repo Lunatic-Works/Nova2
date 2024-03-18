@@ -44,9 +44,9 @@ public class BranchInformation
     /// <remarks>
     /// Since the default branch owns the default name, all other branches should not have the name '__default'
     /// </remarks>
-    public const string Default = "__default";
+    public const string DefaultName = "__default";
 
-    public BranchInformation(string name = Default, string text = null)
+    public BranchInformation(string name = DefaultName, string text = null)
     {
         Name = name;
         Texts = text != null ? new() { [I18n.DefaultLocale] = text } : [];

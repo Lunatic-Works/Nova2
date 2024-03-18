@@ -171,7 +171,7 @@ public class FlowChartNode(string name)
                     "Nova: A flow chart node only have a next node if its type is Normal.");
             }
 
-            return _branches[BranchInformation.Default].NextNode;
+            return _branches[BranchInformation.DefaultName].NextNode;
         }
     }
 
@@ -186,7 +186,7 @@ public class FlowChartNode(string name)
         _branches.Add(branch.Name, branch);
     }
 
-    public BranchInformation GetBranch(string name = BranchInformation.Default)
+    public BranchInformation GetBranch(string name = BranchInformation.DefaultName)
     {
         return _branches.GetValueOrDefault(name, null);
     }
