@@ -7,6 +7,9 @@ namespace Nova;
 
 public partial class NovaController : Node
 {
+    [Export]
+    private string _scriptPath = "scenarios";
+
     private enum ObjectState
     {
         Uninitialized,
@@ -62,20 +65,26 @@ public partial class NovaController : Node
 
     private void AddObjs()
     {
-        AddObj<ScriptLoader>();
+        AddObj(new ScriptLoader(_scriptPath));
     }
 
     public override void _EnterTree()
     {
         Instance = this;
-        AddObjs();
-        foreach (var entry in _objects)
+        try
         {
-            TryInit(entry.Key, entry.Value);
+            AddObjs();
+            foreach (var entry in _objects)
+            {
+                TryInit(entry.Key, entry.Value);
+            }
+        }
+        catch (Exception e)
+        {
+            GD.PushError(e);
+            Utils.Quit();
         }
     }
 
     public static NovaController Instance { get; private set; }
-
-    public ScriptLoader ScriptLoader => GetObj<ScriptLoader>();
 }

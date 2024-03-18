@@ -4,7 +4,7 @@ using Godot;
 
 namespace Nova;
 
-public readonly struct LocalizedDialogueEntry
+public readonly struct LocalizedDialogueEntry()
 {
     public string DisplayName { get; init; }
     public string Dialogue { get; init; }
@@ -13,7 +13,7 @@ public readonly struct LocalizedDialogueEntry
 /// <summary>
 /// Dialogue entry without actions. Used for serialization.
 /// </summary>
-public readonly struct DialogueDisplayData
+public readonly struct DialogueDisplayData()
 {
     public Dictionary<string, string> DisplayNames { get; init; }
     public Dictionary<string, string> Dialogues { get; init; }
@@ -71,38 +71,27 @@ public class DialogueEntry(string characterName, string displayName, string dial
     private DialogueDisplayData? _cachedDisplayData;
     private bool _needInterpolate;
 
-    public bool NeedInterpolate()
+    public bool NeedInterpolate
     {
-        // TODO
-        /*
-        if (_cachedDisplayData == null && !_needInterpolate)
+        get
         {
-            var func = LuaRuntime.Instance.GetFunction("text_need_interpolate");
-            _needInterpolate = _displayNames.Any(x => func.Invoke<string, bool>(x.Value))
-                              || _dialogues.Any(x => func.Invoke<string, bool>(x.Value));
-            if (!_needInterpolate)
+            // TODO
+            if (_cachedDisplayData == null && !_needInterpolate)
             {
-                _cachedDisplayData = new DialogueDisplayData(_displayNames, _dialogues);
+                _needInterpolate = false;
+                _cachedDisplayData = new DialogueDisplayData
+                {
+                    DisplayNames = _displayNames,
+                    Dialogues = _dialogues
+                };
             }
+            return _needInterpolate;
         }
-
-        return _needInterpolate;
-        */
-        if (_cachedDisplayData == null && !_needInterpolate)
-        {
-            _needInterpolate = false;
-            _cachedDisplayData = new DialogueDisplayData
-            {
-                DisplayNames = _displayNames,
-                Dialogues = _dialogues
-            };
-        }
-        return _needInterpolate;
     }
 
     public DialogueDisplayData GetDisplayData()
     {
-        if (NeedInterpolate())
+        if (NeedInterpolate)
         {
             return new DialogueDisplayData
             {
@@ -118,42 +107,18 @@ public class DialogueEntry(string characterName, string displayName, string dial
     /// </summary>
     public void ExecuteAction(DialogueActionStage stage, bool isRestoring)
     {
+        // TODO: add isRestoring
         if (_actions.TryGetValue(stage, out var action))
         {
-            // TODO
+            action.Call("run");
         }
     }
 
-    private const string ActionCoroutineName = "__Nova.action_coroutine";
-
-    public static string WrapCoroutine(string code)
-    {
-        return $@"
-{ActionCoroutineName} = coroutine.start(function()
-    __Nova.coroutineHelper:AcquireActionPause()
-    {code}
-    __Nova.coroutineHelper:ReleaseActionPause()
-end)";
-    }
-
-    public static void StopActionCoroutine()
-    {
-        // TODO
-        // Do nothing if the coroutine is nil
-        // LuaRuntime.Instance.GetFunction("coroutine.stop").Call(ActionCoroutineName);
-    }
+    // TODO: async in gdscript
 
     private static string InterpolateText(string s)
     {
         // TODO
-        /*
-        if (string.IsNullOrEmpty(s))
-        {
-            return s;
-        }
-
-        return LuaRuntime.Instance.GetFunction("interpolate_text").Invoke<string, string>(s);
-        */
         return s;
     }
 }

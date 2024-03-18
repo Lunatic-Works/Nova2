@@ -17,14 +17,21 @@ public enum BlockType
     Separator
 }
 
-public readonly struct ParsedBlock(int line, BlockType type, string content,
-    IReadOnlyDictionary<string, string> attributes = null)
+public readonly struct ParsedBlock()
 {
-    public readonly int Line = line;
-    public readonly BlockType Type = type;
-    public readonly string Content = content?.Replace("\r", "") ?? "";
-    public readonly IReadOnlyDictionary<string, string> Attributes = attributes ??
-        ImmutableDictionary<string, string>.Empty;
+    public int Line { get; init; }
+    public BlockType Type { get; init; }
+    public string Content { get; init; }
+    public IReadOnlyDictionary<string, string> Attributes { get; init; }
+
+    public ParsedBlock(int line, BlockType type, string content,
+        IReadOnlyDictionary<string, string> attributes = null) : this()
+    {
+        Line = line;
+        Type = type;
+        Content = content?.Replace("\r", "") ?? "";
+        Attributes = attributes ?? ImmutableDictionary<string, string>.Empty;
+    }
 
     public IEnumerable<object> ToList()
     {
@@ -83,7 +90,7 @@ public static class NovaParser
             "new line or end of file after |>");
         tokenizer.ParseNext();
 
-        return new ParsedBlock(line, type, content, attributes);
+        return new(line, type, content, attributes);
     }
 
     private static ParsedBlock ParseEagerExecutionBlock(Tokenizer tokenizer, int line)
@@ -235,7 +242,7 @@ public static class NovaParser
         // eat up the last newline
         tokenizer.ParseNext();
 
-        return new ParsedBlock(line, BlockType.Text, content);
+        return new(line, BlockType.Text, content);
     }
 
     private static ParsedBlock ParseBlock(Tokenizer tokenizer)
@@ -250,7 +257,7 @@ public static class NovaParser
         {
             var content = tokenizer.SubString(startIndex, endIndex - startIndex);
             tokenizer.ParseNext();
-            return new ParsedBlock(line, BlockType.Separator, content);
+            return new(line, BlockType.Separator, content);
         }
 
         if (tokenType == TokenType.At)
@@ -433,4 +440,3 @@ public static class NovaParser
         }
     }
 }
-

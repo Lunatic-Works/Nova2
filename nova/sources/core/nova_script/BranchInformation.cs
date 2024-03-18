@@ -11,7 +11,7 @@ public enum BranchMode
     Enable
 }
 
-public readonly struct ChoiceImageInformation
+public readonly struct ChoiceImageInformation()
 {
     public string Name { get; init; }
     public float PositionX { get; init; }

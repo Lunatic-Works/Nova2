@@ -27,6 +27,13 @@ public static class Utils
         return fs.GetAsText();
     }
 
+    public static SceneTree CurrentSceneTree => Engine.GetMainLoop() as SceneTree;
+
+    public static void Quit()
+    {
+        CurrentSceneTree.Quit();
+    }
+
     public static void RuntimeAssert(bool cond, string msg)
     {
         if (!cond)
