@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Godot;
 
 namespace Nova;
 
-public partial class GameState : RefCounted, ISingleton
+public partial class GameState : ISingleton
 {
     private FlowChartGraph _flowChartGraph;
 
