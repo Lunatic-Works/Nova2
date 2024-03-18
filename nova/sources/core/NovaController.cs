@@ -66,6 +66,7 @@ public partial class NovaController : Node
     private void AddObjs()
     {
         AddObj(new ScriptLoader(_scriptPath));
+        AddObj<GameState>();
     }
 
     public override void _EnterTree()

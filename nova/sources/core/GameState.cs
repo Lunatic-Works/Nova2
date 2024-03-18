@@ -26,6 +26,7 @@ public partial class GameState : RefCounted, ISingleton
     public bool IsEnded => _state == State.Ended;
     public bool IsRestoring => _state == State.Restoring;
     public bool IsUpgrading => _state == State.Upgrading;
+    public bool CanStepForward => CurrentNode != null && _state == State.Normal && !_fence.Taken;
 
     /// <summary>
     /// The current coroutine for async functions.
@@ -85,6 +86,56 @@ public partial class GameState : RefCounted, ISingleton
         // TODO
     }
 
+    public void ResetGameState()
+    {
+        CancelCoroutine();
+        CurrentNode = null;
+        _currentDialogueIndex = 0;
+        _currentDialogueEntry = null;
+        _state = State.Ended;
+    }
+
+    public FlowChartNode GetNode(string name, bool addDeferred = true)
+    {
+        var node = _flowChartGraph.GetNode(name);
+        if (addDeferred)
+        {
+            ScriptLoader.AddDeferredDialogueChunks(node);
+        }
+        return node;
+    }
+
+    private void StartGame(FlowChartNode startNode)
+    {
+        ResetGameState();
+        _state = State.Normal;
+        GameStarted.Invoke();
+        MoveToNextNode(startNode);
+    }
+
+    public void StartGame(string startNode)
+    {
+        StartGame(GetNode(startNode));
+    }
+
+    public void Step()
+    {
+        if (!CanStepForward)
+        {
+            return;
+        }
+
+        if (_currentDialogueIndex + 1 < CurrentNode.DialogueEntryCount)
+        {
+            ++_currentDialogueIndex;
+            UpdateGameState(false, true, false, true, false);
+        }
+        else
+        {
+            StepAtEndOfNode();
+        }
+    }
+
     /// <summary>
     /// Called after the current node or the current dialogue index has changed
     /// </summary>
@@ -139,6 +190,9 @@ public partial class GameState : RefCounted, ISingleton
 
         // 2. save Checkpoint
         var isReached = SaveCheckpoint(firstEntryOfNode, dialogueStepped);
+
+        // 3. invoke will change event
+        DialogueWillChange.Invoke();
 
         // 3. execute Default action
         await ExecuteDialogueAction(DialogueActionStage.Default, token);
