@@ -1,12 +1,32 @@
-[gd_scene load_steps=2 format=3 uid="uid://bc4sqnqyin56v"]
+[gd_scene load_steps=3 format=3 uid="uid://bc4sqnqyin56v"]
 
 [ext_resource type="Script" path="res://nova/sources/core/NovaController.cs" id="1_m66ij"]
+[ext_resource type="Script" path="res://nova/sources/scripts/controller/GameViewController.cs" id="2_s4oiy"]
 
-[node name="NovaController" type="Control"]
+[node name="NovaController" type="Node"]
+script = ExtResource("1_m66ij")
+
+[node name="Canvas" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_m66ij")
+
+[node name="GameView" type="Control" parent="Canvas"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_s4oiy")
+
+[node name="Text" type="Label" parent="Canvas/GameView"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "11111111111111"
