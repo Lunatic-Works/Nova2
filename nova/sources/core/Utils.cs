@@ -7,7 +7,8 @@ namespace Nova;
 
 public static class Utils
 {
-    public const string ResourceRoot = "res://nova/resources/";
+    public const string ResourceRoot = "res://resources/";
+    public const string NovaResourceRoot = "res://nova/resources/";
 
     public static FileAccess OpenFile(string path, FileAccess.ModeFlags mode)
     {
