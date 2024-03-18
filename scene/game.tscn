@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bc4sqnqyin56v"]
 
 [ext_resource type="Script" path="res://nova/sources/core/NovaController.cs" id="1_m66ij"]
-[ext_resource type="Script" path="res://nova/sources/scripts/ui/view/ChapterSelectController.cs" id="2_p75uq"]
-[ext_resource type="Script" path="res://nova/sources/scripts/ui/view/GameViewController.cs" id="3_dufi6"]
+[ext_resource type="PackedScene" uid="uid://dnfa7mjnlnxhk" path="res://scene/view/chapter_select_view.tscn" id="2_wb370"]
+[ext_resource type="PackedScene" uid="uid://68j1ks88y8qg" path="res://scene/view/game_view.tscn" id="3_jnk0y"]
 
 [node name="NovaController" type="Node"]
 script = ExtResource("1_m66ij")
@@ -15,42 +15,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ChapterSelectView" type="Control" parent="Canvas" node_paths=PackedStringArray("_chapterList")]
+[node name="ChapterSelectView" parent="Canvas" instance=ExtResource("2_wb370")]
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("2_p75uq")
-_chapterList = NodePath("ChapterList")
 
-[node name="Background" type="ColorRect" parent="Canvas/ChapterSelectView"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ChapterList" type="HBoxContainer" parent="Canvas/ChapterSelectView"]
-layout_mode = 0
-
-[node name="GameView" type="Control" parent="Canvas"]
+[node name="GameView" parent="Canvas" instance=ExtResource("3_jnk0y")]
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("3_dufi6")
-
-[node name="Text" type="Label" parent="Canvas/GameView"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 23.0
-grow_horizontal = 2
-text = "11111111111111"
