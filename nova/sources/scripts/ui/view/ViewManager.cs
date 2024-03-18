@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Godot;
 
 namespace Nova;
 
-public partial class ViewManager : RefCounted, ISingleton
+public partial class ViewManager : ISingleton
 {
     private readonly Dictionary<Type, IPanelController> _controllers = [];
 
