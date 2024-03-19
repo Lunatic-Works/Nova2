@@ -6,9 +6,55 @@ is_unlocked_start()
 第一章开始
 
 <|
-show("bg", "rain_back")
+show("bg", "cg/rain_back")
 |>
 背景出现
+
+<|
+show("fg", "foregrounds/moon_halo", [0, 0, 0.2])
+|>
+前景出现
+
+<|
+move("fg", [1, 1])
+|>
+移动前景
+
+<|
+tint("fg", [1, 0, 0])
+|>
+改变颜色
+
+<|
+move("fg", [null, null, 0.5])
+|>
+改变大小
+
+<|
+move("fg", [null, null, null, null, 45])
+|>
+旋转
+
+<|
+move("fg", [0, 0, 0.2, 0, 0])
+tint("fg", [1, 1, 1])
+|>
+恢复
+
+<|
+move("cam", [5, 5])
+|>
+移动摄像机
+
+<|
+move("cam", [0, 0, null, null, [0, 30, 0]])
+|>
+旋转摄像机
+
+<|
+move("cam", [0, 0, null, null, 0])
+|>
+恢复
 
 111
 
@@ -20,6 +66,11 @@ show("bg", "rain_back")
 hide(o.bg)
 |>
 背景消失
+
+<|
+hide(o.fg)
+|>
+前景消失
 
 第一章结束
 @<| jump_to("ch2") |>
