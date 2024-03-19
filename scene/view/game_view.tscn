@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://68j1ks88y8qg"]
+[gd_scene load_steps=3 format=3 uid="uid://68j1ks88y8qg"]
 
 [ext_resource type="Script" path="res://nova/sources/scripts/ui/view/GameViewController.cs" id="1_y50ik"]
+[ext_resource type="Theme" uid="uid://c12fchogq4o11" path="res://nova/resources/default_theme.tres" id="2_wlcc6"]
 
 [node name="GameView" type="Control"]
 layout_mode = 3
@@ -17,4 +18,5 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 23.0
 grow_horizontal = 2
+theme = ExtResource("2_wlcc6")
 text = "11111111111111"

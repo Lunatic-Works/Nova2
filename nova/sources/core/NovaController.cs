@@ -33,7 +33,7 @@ public partial class NovaController : Node
         }
         catch (Exception e)
         {
-            GD.PushError(e);
+            GD.PrintErr(e);
             Utils.Quit();
         }
     }
@@ -102,6 +102,8 @@ public partial class NovaController : Node
 
     private void AddObjs()
     {
+        AddObj<Assets>();
+        AddObj<I18n>();
         AddObj(new ScriptLoader(_scriptPath));
         AddObj<GameState>();
         AddObj<ViewManager>();

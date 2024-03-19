@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://nova/sources/scripts/ui/view/ChapterSelectController.cs" id="1_o7fb8"]
 
-[node name="ChapterSelectView" type="Control"]
+[node name="ChapterSelectView" type="Control" node_paths=PackedStringArray("_chapterList")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,6 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_o7fb8")
+_chapterList = NodePath("ChapterList")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1

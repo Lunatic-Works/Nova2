@@ -25,13 +25,9 @@ public partial class GameViewController : PanelController
     {
         base._ExitTree();
 
-        _text = null;
-
         _gameState.DialogueWillChange.Unsubscribe(OnDialogueWillChange);
         _gameState.DialogueChanged.Unsubscribe(OnDialogueChanged);
         _gameState.RouteEnded.Unsubscribe(OnRouteEnded);
-
-        _gameState = null;
     }
 
     public override void _GuiInput(InputEvent @event)
@@ -59,6 +55,6 @@ public partial class GameViewController : PanelController
     private void OnRouteEnded(ReachedEndData endData)
     {
         GD.Print($"end reached: {endData.EndName}");
-        this.SwitchView<ChapterSelectController>();
+        this.SwitchView<TitleController>();
     }
 }

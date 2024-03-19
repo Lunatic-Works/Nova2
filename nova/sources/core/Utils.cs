@@ -7,9 +7,6 @@ namespace Nova;
 
 public static class Utils
 {
-    public const string ResourceRoot = "res://resources/";
-    public const string NovaResourceRoot = "res://nova/resources/";
-
     public static FileAccess OpenFile(string path, FileAccess.ModeFlags mode)
     {
         var fs = FileAccess.Open(path, mode);
@@ -42,6 +39,12 @@ public static class Utils
             GD.PrintErr(msg);
             throw new ApplicationException($"Assert failed: {msg}");
         }
+    }
+
+    public static void Warn(string msg)
+    {
+        GD.PrintErr($"Nova: {msg}");
+        GD.PushWarning(msg);
     }
 
     // Knuth's golden ratio multiplicative hashing

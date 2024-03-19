@@ -21,7 +21,7 @@ public partial class ViewManager : ISingleton
 
     public void OnReady()
     {
-        GetController<ChapterSelectController>().ShowPanel();
+        GetController<TitleController>().ShowPanel();
     }
 
     public void OnExit()

@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://b2al0jybq7d2a"]
+
+[ext_resource type="Texture2D" uid="uid://clsxe4hkkewje" path="res://resources/cg/rain_back.png" id="1_8w8cj"]
+[ext_resource type="Script" path="res://nova/sources/scripts/ui/view/TitleController.cs" id="1_am7ky"]
+[ext_resource type="Script" path="res://nova/sources/scripts/ui/i18n/I18nText.cs" id="2_g24vv"]
+[ext_resource type="Theme" path="res://nova/resources/default_theme.tres" id="5_y4mjs"]
+
+[node name="TitleView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_am7ky")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_8w8cj")
+expand_mode = 1
+
+[node name="Menu" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_right = -140.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="StartGame" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 2
+theme = ExtResource("5_y4mjs")
+script = ExtResource("2_g24vv")
+InflateTextKey = "title.menu.start"
+
+[node name="QuitGame" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 2
+theme = ExtResource("5_y4mjs")
+script = ExtResource("2_g24vv")
+InflateTextKey = "title.menu.quit"
+
+[connection signal="pressed" from="Menu/StartGame" to="." method="OnStartGame"]
+[connection signal="pressed" from="Menu/QuitGame" to="." method="OnQuit"]
