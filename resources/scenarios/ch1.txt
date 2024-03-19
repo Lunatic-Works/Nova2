@@ -17,7 +17,7 @@ show("bg", "rain_back")
 333
 
 <|
-o.bg.visible = false
+hide(o.bg)
 |>
 背景消失
 

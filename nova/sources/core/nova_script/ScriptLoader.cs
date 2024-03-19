@@ -191,7 +191,9 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
     {
         foreach (var entry in _lazyBindings)
         {
-            entry.Branch.NextNode = _flowChartGraph.GetNode(entry.Destination);
+            entry.Branch.NextNode = _flowChartGraph.GetNode(entry.Destination) ??
+                throw new ScriptLoadingException(
+                    $"Unknown jump_to or branch node: {entry.Destination}", _currentNode);
         }
         _lazyBindings.Clear();
     }

@@ -31,9 +31,8 @@ public static class GDRuntime
 
     private static string WrapStatements(string baseClass, string script)
     {
-        script = string.IsNullOrWhiteSpace(script) ? "    pass" :
-            script.Trim().Replace("\n", "\n    ");
-        return $"extends {baseClass}\nfunc __eval():\n    {script}\n";
+        script = string.IsNullOrWhiteSpace(script) ? "" : script.Trim().Replace("\n", "\n    ");
+        return $"extends {baseClass}\nfunc __eval():\n    pass\n    {script}\n";
     }
 
     private static string WrapExpression(string baseClass, string script)
