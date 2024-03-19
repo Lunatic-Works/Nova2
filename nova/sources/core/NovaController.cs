@@ -104,10 +104,14 @@ public partial class NovaController : Node
     {
         AddObj<Assets>();
         AddObj<I18n>();
+        AddObj<ObjectManager>();
         AddObj(new ScriptLoader(_scriptPath));
         AddObj<GameState>();
         AddObj<ViewManager>();
     }
 
     public static NovaController Instance { get; private set; }
+
+    // allow gdscript to access
+    public ObjectManager ObjectManager => GetObj<ObjectManager>();
 }
