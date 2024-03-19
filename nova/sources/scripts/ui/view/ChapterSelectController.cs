@@ -32,16 +32,6 @@ public partial class ChapterSelectController : PanelController
         _buttons = _nodes.Select(InitButton).ToList();
     }
 
-    public override void _ExitTree()
-    {
-        base._ExitTree();
-
-        _buttons.Clear();
-        _nodes.Clear();
-
-        _gameState = null;
-    }
-
     private void UpdateNodes()
     {
         _activeNodes = new(_gameState.GetStartNodeNames(
@@ -57,7 +47,8 @@ public partial class ChapterSelectController : PanelController
     {
         var button = new Button
         {
-            Visible = false
+            Visible = false,
+            Theme = Assets.Instance.DefaultTheme
         };
         button.Pressed += () => StartGame(nodeName);
         _chapterList.AddChild(button);
@@ -106,7 +97,7 @@ public partial class ChapterSelectController : PanelController
         UpdateNodes();
         if (_unlockedNodes.Count == 0)
         {
-            GD.PushWarning("Nova: No node is unlocked so the game cannot start. " +
+            Utils.Warn("Nova: No node is unlocked so the game cannot start. " +
                 "Please use is_unlocked_start() rather than is_start() in your first node.");
         }
         else if (_unlockedNodes.Count == 1)

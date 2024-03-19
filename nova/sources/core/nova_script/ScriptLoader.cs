@@ -46,7 +46,7 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
         {
             _currentLocale = locale;
 
-            var localizedPath = Utils.ResourceRoot + _path;
+            var localizedPath = Assets.ResourceRoot + _path;
             if (locale != I18n.DefaultLocale)
             {
                 localizedPath = I18n.LocalizedResourcesPath + locale + "/" + _path;

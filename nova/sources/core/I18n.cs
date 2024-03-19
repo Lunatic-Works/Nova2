@@ -8,54 +8,51 @@ namespace Nova;
 using LocalizedStrings = Dictionary<string, string>;
 using TranslationBundle = Dictionary<string, object>;
 
-public class I18n
+public partial class I18n : ISingleton
 {
-    /* https://docs.godotengine.org/en/stable/tutorials/i18n/locales.html */
-    public const string LocalizedResourcesPath = Utils.ResourceRoot + "localized_resources/";
+    // https://docs.godotengine.org/en/stable/tutorials/i18n/locales.html
+
+    public const string LocalizedResourcesPath = Assets.ResourceRoot + "localized_resources/";
     public const string LocalizedStringsPath = LocalizedResourcesPath + "localized_strings/";
 
     public static readonly string[] SupportedLocales = ["zh", "en"];
-
     public static string DefaultLocale => SupportedLocales[0];
 
-    private static string s_currentLocale = OS.GetLocaleLanguage();
+    private readonly Dictionary<string, TranslationBundle> _translationBundles = [];
 
-    public static event Action LocaleChanged;
-
-    public static string CurrentLocale
+    private string _currentLocale;
+    public Event LocaleChanged = new();
+    public string CurrentLocale
     {
-        get => s_currentLocale;
+        get => _currentLocale;
         set
         {
-            if (s_currentLocale == value)
+            if (_currentLocale == value)
             {
                 return;
             }
 
-            s_currentLocale = value;
+            _currentLocale = value;
             LocaleChanged.Invoke();
         }
     }
 
-    private static bool s_inited;
-
-    private static void Init()
+    public void OnEnter()
     {
-        if (s_inited) return;
-        LoadTranslationBundles();
-        s_inited = true;
-    }
-
-    private static readonly Dictionary<string, TranslationBundle> s_translationBundles = [];
-
-    private static void LoadTranslationBundles()
-    {
+        _currentLocale = OS.GetLocaleLanguage();
         foreach (var locale in SupportedLocales)
         {
             var filePath = LocalizedStringsPath + locale + ".json";
             var translation = Utils.GetFileAsText(filePath);
-            s_translationBundles[locale] = JsonConvert.DeserializeObject<TranslationBundle>(translation);
+            _translationBundles[locale] = JsonConvert.DeserializeObject<TranslationBundle>(translation);
         }
+    }
+
+    public void OnReady() { }
+
+    public void OnExit()
+    {
+        _translationBundles.Clear();
     }
 
     /// <summary>
@@ -67,13 +64,11 @@ public class I18n
     /// <param name="args">Arguments to provide to the translation as a format string.<para />
     /// The first argument will be used to determine the quantity if needed.</param>
     /// <returns>The translated string.</returns>
-    private static string __(string locale, string key, params object[] args)
+    private string Tranlate(string locale, string key, params object[] args)
     {
-        Init();
-
         var translation = key;
 
-        if (s_translationBundles[locale].TryGetValue(key, out var raw))
+        if (_translationBundles[locale].TryGetValue(key, out var raw))
         {
             if (raw is string value)
             {
@@ -83,7 +78,7 @@ public class I18n
             {
                 if (formats.Length == 0)
                 {
-                    GD.PrintErr($"Nova: Empty translation string list for: {key}");
+                    Utils.Warn($"Empty translation string list for: {key}");
                 }
                 else if (args.Length == 0)
                 {
@@ -92,7 +87,7 @@ public class I18n
                 else
                 {
                     // The first argument will determine the quantity
-                    object arg1 = args[0];
+                    var arg1 = args[0];
                     if (arg1 is int i)
                     {
                         translation = formats[Math.Min(i, formats.Length - 1)];
@@ -101,7 +96,7 @@ public class I18n
             }
             else
             {
-                GD.PrintErr($"Nova: Invalid translation format for: {key}");
+                Utils.Warn($"Invalid translation format for: {key}");
             }
 
             if (args.Length > 0)
@@ -111,28 +106,28 @@ public class I18n
         }
         else
         {
-            GD.PrintErr($"Nova: Missing translation for: {key}");
+            Utils.Warn($"Missing translation for: {key}");
         }
 
         return translation;
     }
 
-    public static string __(string key, params object[] args)
+    public string Translate(string key, params object[] args)
     {
-        return __(CurrentLocale, key, args);
+        return Tranlate(CurrentLocale, key, args);
     }
 
     // Get localized string with fallback to DefaultLocale
-    public static string __(LocalizedStrings dict)
+    public string Translate(LocalizedStrings dict)
     {
         if (dict == null)
         {
             return null;
         }
 
-        if (dict.ContainsKey(CurrentLocale))
+        if (dict.TryGetValue(CurrentLocale, out var value))
         {
-            return dict[CurrentLocale];
+            return value;
         }
         else
         {
@@ -140,9 +135,21 @@ public class I18n
         }
     }
 
-    public static LocalizedStrings GetLocalizedStrings(string key, params object[] args)
+    public LocalizedStrings GetLocalizedStrings(string key, params object[] args)
     {
-        var dict = SupportedLocales.ToDictionary(locale => locale, locale => __(locale, key, args));
+        var dict = SupportedLocales.ToDictionary(locale => locale, locale => Translate(locale, key, args));
         return dict;
+    }
+
+    public static I18n Instance => NovaController.Instance.GetObj<I18n>();
+
+    public static string __(string key, params object[] args)
+    {
+        return Instance.Translate(key, args);
+    }
+
+    public static string __(LocalizedStrings dict)
+    {
+        return Instance.Translate(dict);
     }
 }

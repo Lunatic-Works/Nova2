@@ -15,6 +15,14 @@ run/main_scene="res://scene/game.tscn"
 config/features=PackedStringArray("4.2", "C#", "Mobile")
 config/icon="res://icon.svg"
 
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/window_width_override=1152
+window/size/window_height_override=648
+window/stretch/mode="canvas_items"
+
 [dotnet]
 
 project/assembly_name="Nova"
@@ -22,3 +30,4 @@ project/assembly_name="Nova"
 [rendering]
 
 renderer/rendering_method="mobile"
+environment/defaults/default_clear_color=Color(0.301961, 0.301961, 0.301961, 1)

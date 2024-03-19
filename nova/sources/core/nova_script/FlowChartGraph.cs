@@ -98,7 +98,7 @@ public class FlowChartGraph : IEnumerable<FlowChartNode>
         }
         if (_nodes.ContainsKey(node.Name))
         {
-            GD.PushWarning($"Nova: Overwrite node: {node.Name}");
+            Utils.Warn($"Nova: Overwrite node: {node.Name}");
         }
         _nodes[node.Name] = node;
     }
@@ -164,7 +164,7 @@ public class FlowChartGraph : IEnumerable<FlowChartNode>
         CheckNode(node);
         if (_startNodes.ContainsKey(node.Name))
         {
-            GD.PushWarning($"Nova: Overwrite start point: {node.Name}");
+            Utils.Warn($"Nova: Overwrite start point: {node.Name}");
         }
         _startNodes[node.Name] = new StartNode { Node = node, Type = type };
     }
@@ -210,7 +210,7 @@ public class FlowChartGraph : IEnumerable<FlowChartNode>
             if (HasEnd(endName))
             {
                 // But the name has been used
-                GD.PushWarning($"Nova: Overwrite end point: {endName}");
+                Utils.Warn($"Nova: Overwrite end point: {endName}");
             }
 
             // The name is unique, add the node as en and
@@ -270,7 +270,7 @@ public class FlowChartGraph : IEnumerable<FlowChartNode>
         {
             if (node.BranchCount == 0 && node.Type != FlowChartNodeType.End)
             {
-                GD.PushWarning($"Nova: Node {node.Name} has no child." +
+                Utils.Warn($"Nova: Node {node.Name} has no child." +
                     $"It will be marked as an end with name {node.Name}.");
                 node.Type = FlowChartNodeType.End;
                 AddEnd(node, node.Name);
