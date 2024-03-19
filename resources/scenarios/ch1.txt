@@ -3,10 +3,23 @@ label("ch1", "第一章")
 is_unlocked_start()
 |>
 
+第一章开始
+
 <|
-print("111")
+show("bg", "rain_back")
 |>
+背景出现
+
 111
 
 222
+
+333
+
+<|
+o.bg.visible = false
+|>
+背景消失
+
+第一章结束
 @<| jump_to("ch2") |>

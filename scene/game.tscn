@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://b2al0jybq7d2a" path="res://scene/view/title_view.tscn" id="2_ndf75"]
 [ext_resource type="PackedScene" uid="uid://dnfa7mjnlnxhk" path="res://scene/view/chapter_select_view.tscn" id="2_wb370"]
 [ext_resource type="PackedScene" uid="uid://68j1ks88y8qg" path="res://scene/view/game_view.tscn" id="3_jnk0y"]
-[ext_resource type="Texture2D" uid="uid://clsxe4hkkewje" path="res://resources/cg/rain_back.png" id="5_m125y"]
+[ext_resource type="Script" path="res://nova/sources/scripts/ObjectBinder.cs" id="5_uri73"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_3lxvl"]
 viewport_path = NodePath("GameViewport")
@@ -39,7 +39,10 @@ texture = SubResource("ViewportTexture_3lxvl")
 size = Vector2i(1920, 1080)
 
 [node name="BG" type="Sprite3D" parent="GameViewport"]
-texture = ExtResource("5_m125y")
+visible = false
+script = ExtResource("5_uri73")
+_bindName = "bg"
+metadata/folder = "cg"
 
 [node name="Camera3D" type="Camera3D" parent="GameViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
