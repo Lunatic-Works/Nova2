@@ -7,11 +7,6 @@ public partial class PanelController : Control, IPanelController
 {
     public bool Active => Visible;
 
-    public override void _EnterTree()
-    {
-        ViewManager.Instance.RegisterView(this);
-    }
-
     protected virtual void OnTransitionBegin() { }
 
     protected virtual void OnShowFinish() { }

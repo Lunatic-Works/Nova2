@@ -1,17 +1,36 @@
 class_name RuntimeBlock extends BaseBlock
 
-var nova_controller: Node:
+var nova: Node:
     get:
         var tree = Engine.get_main_loop() as SceneTree
         return tree.root.get_node("NovaController")
 
 var o: Dictionary:
     get:
-        return nova_controller.ObjectManager.Objects
+        return nova.ObjectManager.Objects
 
 var c: Dictionary:
     get:
-        return nova_controller.ObjectManager.Constants
+        return nova.ObjectManager.Constants
+
+var box_preset = {
+    bottom = {
+        box = "default_box",
+        anchor = [0.1, 0.9, 0.65, 0.95]
+    },
+    top = {
+        box = 'default_box',
+        anchor = [0.1, 0.9, 0.05, 0.35],
+    },
+    center = {
+        box = 'default_box',
+        offset = [0, 0, 0, 0],
+        anchor = [0.1, 0.9, 0.35, 0.65],
+    },
+    hide = {
+        box = null
+    }
+}
 
 func _get_obj(obj):
     if obj is String:
@@ -78,3 +97,23 @@ func show(obj, image_path, coord=null, color=null) -> void:
 func hide(obj) -> void:
     obj = _get_obj(obj)
     obj.visible = false
+
+func set_box(pos_name="bottom"):
+    var pos = box_preset[pos_name];
+
+    var box = o[pos.box] if pos.get("box") != null else null
+
+    if box != null:
+        var anchor = pos.get("anchor", [0, 1, 0, 1])
+        box.anchor_left = anchor[0]
+        box.anchor_right = anchor[1]
+        box.anchor_top = anchor[2]
+        box.anchor_bottom = anchor[3]
+
+        var offset = pos.get("offset", [0, 0, 0, 0])
+        box.offset_left = offset[0]
+        box.offset_right = offset[1]
+        box.offset_top = offset[2]
+        box.offset_bottom = offset[3]
+
+    nova.GameViewController.SwitchDialogueBox(box, true)

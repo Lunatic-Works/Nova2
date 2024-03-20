@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=3 uid="uid://cfrhoyy70iyt1"]
+
+[ext_resource type="Script" path="res://nova/sources/scripts/ui/game_view/DialogueTextController.cs" id="1_bd2kn"]
+[ext_resource type="PackedScene" uid="uid://cp47gcqw6tntd" path="res://scene/ui/dialogue_entry.tscn" id="1_hmxg5"]
+[ext_resource type="Script" path="res://nova/sources/scripts/ui/game_view/DialogueBoxController.cs" id="1_nc15m"]
+
+[node name="DialogueBox" type="Control" node_paths=PackedStringArray("_background", "_textController")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nc15m")
+_background = NodePath("ColorRect")
+_textController = NodePath("Text/Entries")
+Opacity = 1.0
+BackgroundColor = Color(0, 0, 0, 1)
+TextColor = Color(1, 1, 1, 1)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Text" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Entries" type="VBoxContainer" parent="Text"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_bd2kn")
+_entryFactory = ExtResource("1_hmxg5")

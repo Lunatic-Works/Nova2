@@ -114,4 +114,7 @@ public partial class NovaController : Node
 
     // allow gdscript to access
     public ObjectManager ObjectManager => GetObj<ObjectManager>();
+
+    public GameViewController GameViewController =>
+        GetObj<ViewManager>().GetController<GameViewController>();
 }

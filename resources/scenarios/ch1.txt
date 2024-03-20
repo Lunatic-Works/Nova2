@@ -2,7 +2,9 @@
 label("ch1", "第一章")
 is_unlocked_start()
 |>
-
+<|
+set_box()
+|>
 第一章开始
 
 <|

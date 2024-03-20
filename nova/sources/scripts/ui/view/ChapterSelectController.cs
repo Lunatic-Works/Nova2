@@ -5,7 +5,7 @@ using Godot;
 
 namespace Nova;
 
-public partial class ChapterSelectController : PanelController
+public partial class ChapterSelectController : ViewController
 {
     [Export]
     private bool _unlockAllNodes;
