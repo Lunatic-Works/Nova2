@@ -2,7 +2,7 @@ using Godot;
 
 namespace Nova;
 
-public partial class TitleController : PanelController
+public partial class TitleController : ViewController
 {
     public void OnStartGame()
     {

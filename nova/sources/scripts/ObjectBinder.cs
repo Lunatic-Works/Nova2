@@ -9,6 +9,11 @@ public partial class ObjectBinder : Node
 
     public override void _EnterTree()
     {
+        if (string.IsNullOrEmpty(_bindName))
+        {
+            Utils.Warn($"Empty binding name on {this}");
+            return;
+        }
         ObjectManager.Instance.BindObject(_bindName, this);
     }
 }

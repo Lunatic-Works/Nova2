@@ -30,6 +30,7 @@ public partial class ViewManager : ISingleton
     }
 
     public static ViewManager Instance => NovaController.Instance.GetObj<ViewManager>();
+    public static GameViewController GameView => Instance.GetController<GameViewController>();
 }
 
 public static class ViewHelper

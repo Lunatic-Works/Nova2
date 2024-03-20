@@ -3,10 +3,16 @@ using Godot;
 
 namespace Nova;
 
-public partial class GameViewController : PanelController
+public partial class GameViewController : ViewController
 {
+    [Export]
+    private PanelController _gameUI;
+
     private GameState _gameState;
-    private Label _text;
+
+    public DialogueBoxController CurrentDialogueBox { get; set; }
+
+    public bool UIActive => _gameUI.Active;
 
     public override void _EnterTree()
     {
@@ -17,8 +23,6 @@ public partial class GameViewController : PanelController
         _gameState.DialogueWillChange.Subscribe(OnDialogueWillChange);
         _gameState.DialogueChanged.Subscribe(OnDialogueChanged);
         _gameState.RouteEnded.Subscribe(OnRouteEnded);
-
-        _text = GetNode<Label>("Text");
     }
 
     public override void _ExitTree()
@@ -47,14 +51,56 @@ public partial class GameViewController : PanelController
 
     private void OnDialogueChanged(DialogueChangedData dialogueData)
     {
-        var text = dialogueData.DisplayData.FormatNameDialogue();
         GD.Print("dialogue changed");
-        _text.Text = text;
+        CurrentDialogueBox?.DisplayDialogue(dialogueData.DisplayData);
     }
 
     private void OnRouteEnded(ReachedEndData endData)
     {
         GD.Print($"end reached: {endData.EndName}");
         this.SwitchView<TitleController>();
+    }
+
+    public void ShowUI(Action onFinish)
+    {
+        _gameUI.ShowPanel(onFinish);
+    }
+
+    public void HideUI(Action onFinish)
+    {
+        _gameUI.HidePanel(onFinish);
+    }
+
+    // for gdscript
+    public void ShowUI()
+    {
+        ShowUI(null);
+    }
+
+    public void HideUI()
+    {
+        _gameUI.HidePanel(null);
+    }
+
+    public void SwitchDialogueBox(DialogueBoxController box, bool cleanText = true)
+    {
+        if (CurrentDialogueBox == box)
+        {
+            box?.ShowPanelImmediate();
+            // Do not clean text
+            return;
+        }
+
+        CurrentDialogueBox?.HidePanelImmediate();
+        if (box != null)
+        {
+            box.ShowPanelImmediate();
+            if (cleanText)
+            {
+                box.NewPage();
+            }
+        }
+
+        CurrentDialogueBox = box;
     }
 }

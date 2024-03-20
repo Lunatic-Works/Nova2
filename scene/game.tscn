@@ -57,3 +57,4 @@ script = ExtResource("5_uri73")
 _bindName = "cam"
 
 [editable path="Canvas/GameView"]
+[editable path="Canvas/GameView/GameUI/DefaultDialogueBox"]
