@@ -11,7 +11,7 @@ public class Assets : ISingleton
 
     public void OnEnter()
     {
-        DefaultTheme = GD.Load<Theme>(NovaResourceRoot + "default_theme.tres");
+        DefaultTheme = ResourceLoader.Load<Theme>(NovaResourceRoot + "default_theme.tres");
     }
 
     public void OnReady() { }
