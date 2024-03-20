@@ -48,6 +48,20 @@ set_box()
 |>
 恢复
 
+选项
+@<| branch([
+    { dest="l_ch2_1", text="选项1" },
+    { dest="l_ch2_2", text="选项2" },
+]) |>
 
+@<| label("l_ch2_1") |>
+你选了选项1
+@<| jump_to("l_ch2_end") |>
+
+@<| label("l_ch2_2") |>
+你选了选项2
+@<| jump_to("l_ch2_end") |>
+
+@<| label("l_ch2_end") |>
 第二章结束
 @<| is_end() |>

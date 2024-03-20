@@ -23,36 +23,38 @@ public partial class DialogueEntryController : Control
 
     public override void _EnterTree()
     {
-        I18n.Instance.LocaleChanged.Subscribe(() => UpdateText());
+        I18n.Instance.LocaleChanged.Subscribe(UpdateText);
     }
 
     public override void _Ready()
     {
-        UpdateText(true);
-        UpdateColor(true);
+        UpdateText();
+        UpdateColor();
     }
 
     public override void _ExitTree()
     {
-        I18n.Instance.LocaleChanged.Unsubscribe(() => UpdateText());
+        I18n.Instance.LocaleChanged.Unsubscribe(UpdateText);
+        // clear references
+        DisplayData = default;
+        TextColor = default;
     }
 
-    private void UpdateText(bool force = false)
+    private void UpdateText()
     {
-        if (!force && !IsNodeReady())
+        if (!IsNodeReady())
         {
             return;
         }
         var name = I18n.__(DisplayData.DisplayNames);
-        GD.Print(name);
         _nameText.Visible = !string.IsNullOrEmpty(name);
         _nameText.Text = name;
         _contentText.Text = I18n.__(DisplayData.Dialogues);
     }
 
-    private void UpdateColor(bool force = false)
+    private void UpdateColor()
     {
-        if (!force && !IsNodeReady())
+        if (!IsNodeReady())
         {
             return;
         }
@@ -64,6 +66,5 @@ public partial class DialogueEntryController : Control
     {
         DisplayData = displayData;
         TextColor = textColor;
-        RequestReady();
     }
 }

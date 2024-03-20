@@ -65,22 +65,22 @@ public partial class DialogueBoxController : PanelController
 
     public override void _Ready()
     {
-        UpdateBackgroundColor(true);
-        UpdateTextColor(true);
+        UpdateBackgroundColor();
+        UpdateTextColor();
     }
 
-    private void UpdateBackgroundColor(bool force = false)
+    private void UpdateBackgroundColor()
     {
-        if (!force && !IsNodeReady())
+        if (!IsNodeReady())
         {
             return;
         }
         _background.Modulate = new Color(_backgroundColor, _backgroundColor.A * _opacity);
     }
 
-    private void UpdateTextColor(bool force = false)
+    private void UpdateTextColor()
     {
-        if (!force && !IsNodeReady())
+        if (!IsNodeReady())
         {
             return;
         }
