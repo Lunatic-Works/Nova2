@@ -20,6 +20,7 @@ layout_mode = 2
 
 [node name="Content" type="RichTextLabel" parent="."]
 layout_mode = 2
+mouse_filter = 2
 theme = ExtResource("1_jq1ly")
 fit_content = true
 scroll_active = false

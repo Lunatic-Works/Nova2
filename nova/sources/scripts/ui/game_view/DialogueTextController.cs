@@ -7,7 +7,7 @@ public partial class DialogueTextController : Control
 {
     [Export]
     private PackedScene _entryFactory;
-    private ObjectPool<DialogueEntryController> _pool;
+    private NodePool<DialogueEntryController> _pool;
 
     private readonly List<DialogueEntryController> _entries = [];
     public IReadOnlyList<DialogueEntryController> Entries => _entries;
@@ -15,24 +15,21 @@ public partial class DialogueTextController : Control
 
     public override void _EnterTree()
     {
-        _pool = new(() => _entryFactory.Instantiate<DialogueEntryController>());
+        _pool = new(_entryFactory);
     }
 
     public void Clear()
     {
         foreach (var entry in _entries)
         {
-            RemoveChild(entry);
-            _pool.Put(entry);
+            _pool.Put(entry, this);
         }
         _entries.Clear();
     }
 
     public DialogueEntryController AddEntry(DialogueDisplayData displayData, Color textColor)
     {
-        var entry = _pool.Get();
-        entry.Init(displayData, textColor);
-        AddChild(entry);
+        var entry = _pool.Get(this, e => e.Init(displayData, textColor));
         _entries.Add(entry);
         return entry;
     }

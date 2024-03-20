@@ -106,6 +106,11 @@ public partial class GameState : ISingleton
         _state = State.Ended;
     }
 
+    public void SignalFence<T>(T result)
+    {
+        _fence.Signal(result);
+    }
+
     public FlowChartNode GetNode(string name, bool addDeferred = true)
     {
         var node = _flowChartGraph.GetNode(name);

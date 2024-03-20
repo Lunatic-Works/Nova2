@@ -297,13 +297,14 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
     public void RegisterBranch(string name, string destination, string text, Variant imageInfo,
         BranchMode mode, string condition)
     {
+        var hasCondition = !string.IsNullOrEmpty(condition);
         if (string.IsNullOrEmpty(destination))
         {
             throw new ScriptLoadingException("A branch must have a destination.",
                 _currentNode, $"text: {text}");
         }
 
-        if (mode == BranchMode.Normal && condition != null)
+        if (mode == BranchMode.Normal && hasCondition)
         {
             throw new ScriptLoadingException("Branch mode is Normal but condition is not null.",
                 _currentNode, $"destination: {destination}");
@@ -315,7 +316,7 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
                 _currentNode, $"destination: {destination}");
         }
 
-        if ((mode == BranchMode.Show || mode == BranchMode.Enable) && condition == null)
+        if ((mode == BranchMode.Show || mode == BranchMode.Enable) && !hasCondition)
         {
             throw new ScriptLoadingException("Branch mode is Show or Enable but condition is null.",
                 _currentNode, $"destination: {destination}");
@@ -325,7 +326,7 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
         var branch = new BranchInformation(name, text)
         {
             ImageInfo = ConvertImageInfo(imageInfo), Mode = mode,
-            Condition = string.IsNullOrEmpty(condition) ? null : GDRuntime.CompileCondition(condition)
+            Condition = hasCondition ? GDRuntime.CompileCondition(condition) : null
         };
         _currentNode.AddBranch(branch);
         _lazyBindings.Add(new()

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Godot;
 
 namespace Nova;
-using LocalizedStrings = Dictionary<string, string>;
+using LocalizedStrings = IReadOnlyDictionary<string, string>;
 using TranslationBundle = Dictionary<string, object>;
 
 public partial class I18n : ISingleton
