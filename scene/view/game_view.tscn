@@ -45,7 +45,6 @@ script = ExtResource("3_fbjug")
 [node name="DefaultDialogueBox" parent="GameUI" instance=ExtResource("3_3befe")]
 visible = false
 layout_mode = 1
-mouse_filter = 1
 _bindName = "default_box"
 Opacity = 0.7
 
@@ -54,6 +53,21 @@ anchors_preset = -1
 offset_left = 120.0
 offset_top = 40.0
 offset_right = -180.0
+
+[node name="BasicDialogueBox" parent="GameUI" instance=ExtResource("3_3befe")]
+visible = false
+layout_mode = 1
+_bindName = "basic_box"
+_mode = 1
+Opacity = 0.7
+
+[node name="Text" parent="GameUI/BasicDialogueBox" index="1"]
+anchors_preset = -1
+offset_left = 60.0
+offset_top = 42.0
+offset_right = -120.0
+offset_bottom = -42.0
+vertical_scroll_mode = 1
 
 [node name="Choices" type="VBoxContainer" parent="GameUI"]
 visible = false
@@ -67,3 +81,4 @@ theme_override_constants/separation = 30
 script = ExtResource("5_efxj4")
 
 [editable path="GameUI/DefaultDialogueBox"]
+[editable path="GameUI/BasicDialogueBox"]

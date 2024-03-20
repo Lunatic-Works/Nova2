@@ -16,7 +16,7 @@ var c: Dictionary:
 var box_preset = {
     bottom = {
         box = "default_box",
-        anchor = [0.1, 0.9, 0.65, 0.95]
+        anchor = [0.1, 0.9, 0.65, 0.95],
     },
     top = {
         box = 'default_box',
@@ -24,12 +24,23 @@ var box_preset = {
     },
     center = {
         box = 'default_box',
-        offset = [0, 0, 0, 0],
         anchor = [0.1, 0.9, 0.35, 0.65],
     },
+    left = {
+        box = 'basic_box',
+        anchor = [0, 0.5, 0, 1],
+    },
+    right = {
+        box = 'basic_box',
+        anchor = [0.5, 1, 0, 1],
+    },
+    full = {
+        box = 'basic_box',
+        anchor = [0, 1, 0, 1],
+    },
     hide = {
-        box = null
-    }
+        box = null,
+    },
 }
 
 func _get_obj(obj):

@@ -48,6 +48,32 @@ set_box()
 |>
 恢复
 
+<|
+set_box("full")
+|>
+另一个对话框
+
+111
+
+222
+
+333
+
+<|
+set_box("left")
+|>
+左边
+
+<|
+set_box("right")
+|>
+右边
+
+<|
+set_box()
+|>
+恢复
+
 选项
 @<| branch([
     { dest="l_ch2_1", text="选项1" },
