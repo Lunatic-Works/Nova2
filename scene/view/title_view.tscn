@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://clsxe4hkkewje" path="res://resources/cg/rain_back.png" id="1_8w8cj"]
 [ext_resource type="Script" path="res://nova/sources/scripts/ui/view/TitleController.cs" id="1_am7ky"]
 [ext_resource type="Script" path="res://nova/sources/scripts/ui/i18n/I18nText.cs" id="2_g24vv"]
-[ext_resource type="Theme" path="res://nova/resources/default_theme.tres" id="5_y4mjs"]
+[ext_resource type="Theme" uid="uid://c12fchogq4o11" path="res://nova/resources/default_theme.tres" id="5_y4mjs"]
 
 [node name="TitleView" type="Control"]
 layout_mode = 3
