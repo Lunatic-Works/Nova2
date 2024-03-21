@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://nova/sources/scripts/ObjectBinder.cs" id="5_uri73"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_3lxvl"]
-viewport_path = NodePath("GameViewport")
+viewport_path = NodePath("World/MainViewport")
 
 [node name="NovaController" type="Node"]
 script = ExtResource("1_m66ij")
@@ -35,21 +35,23 @@ layout_mode = 1
 [node name="Game" parent="Canvas/GameView" index="0"]
 texture = SubResource("ViewportTexture_3lxvl")
 
-[node name="GameViewport" type="SubViewport" parent="."]
-size = Vector2i(1920, 1080)
+[node name="World" type="Node3D" parent="."]
 
-[node name="Background" type="Sprite3D" parent="GameViewport"]
+[node name="Background" type="Sprite3D" parent="World"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 visible = false
 script = ExtResource("5_uri73")
 _bindName = "bg"
 
-[node name="Foreground" type="Sprite3D" parent="GameViewport"]
+[node name="Foreground" type="Sprite3D" parent="World"]
 visible = false
 script = ExtResource("5_uri73")
 _bindName = "fg"
 
-[node name="MainCamera" type="Camera3D" parent="GameViewport"]
+[node name="MainViewport" type="SubViewport" parent="World"]
+size = Vector2i(1920, 1080)
+
+[node name="MainCamera" type="Camera3D" parent="World/MainViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 projection = 1
 size = 10.8
