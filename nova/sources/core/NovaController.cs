@@ -108,6 +108,7 @@ public partial class NovaController : Node
         AddObj(new ScriptLoader(_scriptPath));
         AddObj<GameState>();
         AddObj<ViewManager>();
+        AddObj<StateManager>();
     }
 
     public static NovaController Instance { get; private set; }

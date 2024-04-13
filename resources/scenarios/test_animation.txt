@@ -1,0 +1,37 @@
+@<|
+label("test_animation")
+is_unlocked_start()
+|>
+<|
+set_box()
+|>
+测试动画
+
+<|
+show("bg", "cg/rain_back")
+show("fg", "foregrounds/moon_halo", [0, 0, 0.2])
+|>
+显示图片
+
+<|
+o.anim.PropertyVector3(o.fg, "position", Vector3(1, 1, 0), 0.5)  \
+    .PropertyVector3(o.fg, "scale", Vector3(0.3, 0.3, 0.3), 0.5) \
+    .PropertyVector3(o.fg, "rotation", Vector3(0, 0, 2), 1)
+|>
+顺序播放动画
+
+<|
+o.anim.PropertyVector3(o.fg, "position", Vector3(0, 0, 0), 1)
+o.anim.PropertyVector3(o.fg, "scale", Vector3(0.2, 0.2, 0.2), 1)
+o.anim.PropertyColor(o.fg, "modulate", Color(1, 1, 1, 0.5), 1)
+|>
+同时播放动画
+
+<|
+hide("bg")
+hide("fg")
+|>
+结束
+
+
+@<| is_end() |>
