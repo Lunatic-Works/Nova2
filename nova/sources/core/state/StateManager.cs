@@ -6,6 +6,7 @@ namespace Nova;
 public class StateManager : ISingleton
 {
     private GameState _gameState;
+    private ObjectManager _objectManager;
 
     private readonly List<IStateObject> _states = [];
 
@@ -16,33 +17,57 @@ public class StateManager : ISingleton
         _gameState = GameState.Instance;
         _gameState.DialogueChangedEarly.Subscribe(_ => OnDialogueChangedEarly());
 
-        var objectManager = ObjectManager.Instance;
-
+        _objectManager = ObjectManager.Instance;
         Animation = new AnimationState();
         _states.Add(Animation);
-        objectManager.BindObject("anim", Animation.Root);
+        _objectManager.BindObject("anim", Animation.Root);
     }
 
     public void OnExit() { }
 
     public void OnReady() { }
 
+    public void SyncBackend()
+    {
+        foreach (var state in _states)
+        {
+            state.SyncBackend();
+        }
+    }
+
+    public void SyncImmediate()
+    {
+        foreach (var state in _states)
+        {
+            state.SyncImmediate();
+        }
+    }
+
+    public void Sync()
+    {
+        foreach (var state in _states)
+        {
+            state.Sync();
+        }
+    }
+
     private void OnDialogueChangedEarly()
     {
-        if (_gameState.IsRestoring)
+        if (_gameState.IsRestoring || _gameState.IsUpgrading)
         {
-            foreach (var state in _states)
-            {
-                state.SyncImmediate();
-            }
+            SyncBackend();
         }
         else
         {
-            foreach (var state in _states)
-            {
-                state.Sync();
-            }
+            Sync();
         }
+    }
+
+    public void BindPropertyState(string name, GodotObject obj)
+    {
+        var state = new PropertyState(obj);
+        _states.Add(state);
+        _objectManager.BindObject(name, state);
     }
 
     public static StateManager Instance => NovaController.Instance.GetObj<StateManager>();

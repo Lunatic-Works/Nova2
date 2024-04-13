@@ -5,42 +5,38 @@ namespace Nova;
 
 public class PropertyAnimation<[MustBeVariant] T> : IAnimation
 {
-    public GodotObject Object { get; init; }
-    public NodePath Property { get; init; }
-    public T From { get; init; }
+    public PropertyState Object { get; init; }
+    public StringName Property { get; init; }
     public T To { get; init; }
     public double Duration { get; init; }
-    public bool FromCurrent { get; init; }
     public bool Relative { get; init; }
+
+    private void GetFromTo(out Variant from, out Variant to)
+    {
+        var fromT = Object.Get(Property).As<T>();
+        var toT = To;
+        if (Relative)
+        {
+            toT += (dynamic)fromT;
+        }
+        from = Variant.From(fromT);
+        to = Variant.From(toT);
+    }
 
     public bool Execute(Tween tween)
     {
-        var tweener = tween.TweenProperty(Object, Property, Variant.From(To), Duration);
-
-        if (Relative)
-        {
-            tweener.AsRelative();
-        }
-        else if (FromCurrent)
-        {
-            tweener.FromCurrent();
-        }
-        else
-        {
-            tweener.From(Variant.From(From));
-        }
+        GetFromTo(out var from, out var to);
+        GD.Print($"Tween {Object.Binding}.{Property} {from} -> {to}");
+        var tweener = tween.TweenProperty(Object.Binding, Property.ToString(), to, Duration);
+        tweener.From(from);
         return true;
     }
 
     public bool ExecuteImmediate()
     {
-        var to = To;
-        var prop = Property.ToString();
-        if (Relative)
-        {
-            to += (dynamic)Object.Get(Property.GetConcatenatedSubNames()).As<T>();
-        }
-        Object.Set(prop, Variant.From(to));
+        GetFromTo(out _, out var to);
+        GD.Print($"Set {Object.Binding}.{Property} = {to}");
+        Object.Set(Property, to);
         return true;
     }
 }

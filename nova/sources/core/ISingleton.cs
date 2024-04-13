@@ -2,7 +2,7 @@ namespace Nova;
 
 public interface ISingleton
 {
-    public void OnEnter();
-    public void OnReady();
-    public void OnExit();
+    void OnEnter();
+    void OnReady();
+    void OnExit();
 }

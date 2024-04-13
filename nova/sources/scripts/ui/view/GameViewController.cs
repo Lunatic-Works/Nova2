@@ -10,6 +10,7 @@ public partial class GameViewController : ViewController
 
     private GameState _gameState;
     private AnimationState _animation;
+    private StateManager _stateManager;
 
     public DialogueBoxController CurrentDialogueBox { get; set; }
 
@@ -25,7 +26,8 @@ public partial class GameViewController : ViewController
         _gameState.DialogueChanged.Subscribe(OnDialogueChanged);
         _gameState.RouteEnded.Subscribe(OnRouteEnded);
 
-        _animation = StateManager.Instance.Animation;
+        _stateManager = StateManager.Instance;
+        _animation = _stateManager.Animation;
     }
 
     public override void _ExitTree()
@@ -45,6 +47,7 @@ public partial class GameViewController : ViewController
             if (_animation.IsRunning)
             {
                 _animation.Stop();
+                _stateManager.SyncImmediate();
             }
             else
             {
@@ -91,7 +94,7 @@ public partial class GameViewController : ViewController
         _gameUI.HidePanel(null);
     }
 
-    public void SwitchDialogueBox(DialogueBoxController box, bool cleanText = true)
+    public void Switch(DialogueBoxController box, bool cleanText = true)
     {
         if (CurrentDialogueBox == box)
         {
@@ -111,5 +114,10 @@ public partial class GameViewController : ViewController
         }
 
         CurrentDialogueBox = box;
+    }
+
+    public void SwitchDialogueBox(PropertyState box, bool cleanText = true)
+    {
+        Switch((DialogueBoxController)box.Binding, cleanText);
     }
 }

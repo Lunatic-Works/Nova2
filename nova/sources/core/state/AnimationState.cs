@@ -20,7 +20,6 @@ public partial class AnimationState : RefCounted, IStateObject
 
     private void Clear()
     {
-        GD.Print("Clear");
         _animations.Clear();
         Root.Children.Clear();
     }
@@ -43,5 +42,10 @@ public partial class AnimationState : RefCounted, IStateObject
     public void SyncImmediate()
     {
         _executor.ExecuteImmediate(Root);
+    }
+
+    public void SyncBackend()
+    {
+        SyncImmediate();
     }
 }

@@ -60,7 +60,7 @@ public partial class DialogueBoxController : PanelController
 
     public override void _EnterTree()
     {
-        ObjectManager.Instance.BindObject(_bindName, this);
+        StateManager.Instance.BindPropertyState(_bindName, this);
     }
 
     public override void _Ready()
