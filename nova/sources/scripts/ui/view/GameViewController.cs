@@ -9,6 +9,7 @@ public partial class GameViewController : ViewController
     private PanelController _gameUI;
 
     private GameState _gameState;
+    private AnimationState _animation;
 
     public DialogueBoxController CurrentDialogueBox { get; set; }
 
@@ -23,6 +24,8 @@ public partial class GameViewController : ViewController
         _gameState.DialogueWillChange.Subscribe(OnDialogueWillChange);
         _gameState.DialogueChanged.Subscribe(OnDialogueChanged);
         _gameState.RouteEnded.Subscribe(OnRouteEnded);
+
+        _animation = StateManager.Instance.Animation;
     }
 
     public override void _ExitTree()
@@ -39,8 +42,14 @@ public partial class GameViewController : ViewController
         if (@event is InputEventMouseButton button &&
             button.ButtonIndex == MouseButton.Left && button.IsPressed())
         {
-            GD.Print("Step");
-            _gameState.Step();
+            if (_animation.IsRunning)
+            {
+                _animation.Stop();
+            }
+            else
+            {
+                _gameState.Step();
+            }
         }
     }
 

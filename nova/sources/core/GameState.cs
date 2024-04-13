@@ -49,10 +49,14 @@ public partial class GameState : ISingleton
     /// </summary>
     public readonly Event DialogueWillChange = new();
     /// <summary>
+    /// This event will be triggered if the content of the dialogue has changed, but before the dialogue box
+    /// receives the text. All state objects will sync to frontend components at this point.
+    /// </summary>
+    public readonly Event<DialogueChangedData> DialogueChangedEarly = new();
+    /// <summary>
     /// This event will be triggered if the content of the dialogue has changed. The new dialogue text will be
     /// sent to all listeners.
     /// </summary>
-    public readonly Event<DialogueChangedData> DialogueChangedEarly = new();
     public readonly Event<DialogueChangedData> DialogueChanged = new();
     /// <summary>
     /// This event will be triggered if choices occur, either when branches occur or when choices are
