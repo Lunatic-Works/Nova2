@@ -7,11 +7,13 @@ public partial class GameViewController : ViewController
 {
     [Export]
     private PanelController _gameUI;
+    [Export]
+    private ButtonRingTrigger _buttonRingTrigger;
 
     private GameState _gameState;
+    private GameViewInput _gameInput;
 
     public DialogueBoxController CurrentDialogueBox { get; set; }
-
     public bool UIActive => _gameUI.Active;
 
     public override void _EnterTree()
@@ -23,6 +25,11 @@ public partial class GameViewController : ViewController
         _gameState.DialogueWillChange.Subscribe(OnDialogueWillChange);
         _gameState.DialogueChanged.Subscribe(OnDialogueChanged);
         _gameState.RouteEnded.Subscribe(OnRouteEnded);
+
+        _gameInput = new(this)
+        {
+            ButtonRingTrigger = _buttonRingTrigger
+        };
     }
 
     public override void _ExitTree()
@@ -34,13 +41,16 @@ public partial class GameViewController : ViewController
         _gameState.RouteEnded.Unsubscribe(OnRouteEnded);
     }
 
+    public void Step()
+    {
+        _gameState.Step();
+    }
+
     public override void _GuiInput(InputEvent @event)
     {
-        if (@event is InputEventMouseButton button &&
-            button.ButtonIndex == MouseButton.Left && button.IsPressed())
+        if (@event is InputEventMouseButton mouseButton)
         {
-            GD.Print("Step");
-            _gameState.Step();
+            _gameInput.HandleMouseButton(mouseButton);
         }
     }
 
