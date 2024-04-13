@@ -1,15 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://bc4sqnqyin56v"]
+[gd_scene load_steps=8 format=3 uid="uid://bc4sqnqyin56v"]
 
 [ext_resource type="Script" path="res://nova/sources/core/NovaController.cs" id="1_m66ij"]
 [ext_resource type="PackedScene" uid="uid://b2al0jybq7d2a" path="res://scene/view/title_view.tscn" id="2_ndf75"]
 [ext_resource type="PackedScene" uid="uid://dnfa7mjnlnxhk" path="res://scene/view/chapter_select_view.tscn" id="2_wb370"]
 [ext_resource type="PackedScene" uid="uid://68j1ks88y8qg" path="res://scene/view/game_view.tscn" id="3_jnk0y"]
-[ext_resource type="Script" path="res://nova/sources/scripts/ui/button_ring/ButtonRingTrigger.cs" id="5_dup7m"]
-[ext_resource type="Script" path="res://nova/sources/scripts/ui/button_ring/ButtonRing.cs" id="5_pgj6o"]
+[ext_resource type="PackedScene" uid="uid://brqss137fqre" path="res://scene/ui/button_ring.tscn" id="5_kflyq"]
 [ext_resource type="Script" path="res://nova/sources/scripts/ObjectBinder.cs" id="5_uri73"]
-[ext_resource type="Script" path="res://nova/sources/scripts/RealInput.cs" id="6_tq6kb"]
-[ext_resource type="Texture2D" uid="uid://be85u3e8tp1gb" path="res://resources/button_ring/button_ring_0.png" id="7_466l5"]
-[ext_resource type="Script" path="res://nova/sources/scripts/ui/game_view/GameViewInput.cs" id="7_lq0xm"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_3lxvl"]
 viewport_path = NodePath("World/MainViewport")
@@ -33,66 +29,18 @@ layout_mode = 1
 visible = false
 layout_mode = 1
 
-[node name="GameView" parent="Canvas" instance=ExtResource("3_jnk0y")]
+[node name="GameView" parent="Canvas" node_paths=PackedStringArray("_buttonRingTrigger") instance=ExtResource("3_jnk0y")]
 visible = false
 layout_mode = 1
+_buttonRingTrigger = NodePath("../ButtonRing")
 
 [node name="Game" parent="Canvas/GameView" index="0"]
 texture = SubResource("ViewportTexture_3lxvl")
 
+[node name="ButtonRing" parent="Canvas" instance=ExtResource("5_kflyq")]
+layout_mode = 1
+
 [node name="World" type="Node3D" parent="."]
-
-[node name="ButtonRing" type="Control" parent="Canvas/GameView/GameUI" index="3"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -1920.0
-offset_bottom = -1080.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("5_dup7m")
-
-[node name="Ring" type="Control" parent="Canvas/GameView/GameUI/ButtonRing"]
-custom_minimum_size = Vector2(300, 300)
-anchors_preset = 0
-offset_right = 300.0
-offset_bottom = 300.0
-pivot_offset = Vector2(150, 150)
-script = ExtResource("5_pgj6o")
-
-[node name="TextureRect" type="TextureRect" parent="Canvas/GameView/GameUI/ButtonRing/Ring"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(150, 150)
-texture = ExtResource("7_466l5")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="Canvas/GameView/GameUI/ButtonRing/Ring"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 25
-text = "Test Text"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="GameViewport" type="SubViewport" parent="."]
-size = Vector2i(1920, 1080)
 
 [node name="Background" type="Sprite3D" parent="World"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
@@ -114,29 +62,6 @@ projection = 1
 size = 10.8
 script = ExtResource("5_uri73")
 _bindName = "cam"
-
-[node name="InputSystem" type="Control" parent="."]
-visible = false
-layout_mode = 3
-anchors_preset = 0
-
-[node name="RealInput" type="Control" parent="InputSystem"]
-visible = false
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("6_tq6kb")
-
-[node name="GameViewInput" type="Control" parent="InputSystem" node_paths=PackedStringArray("_buttonRingTrigger")]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("7_lq0xm")
-_buttonRingTrigger = NodePath("../../Canvas/GameView/GameUI/ButtonRing")
 
 [editable path="Canvas/GameView"]
 [editable path="Canvas/GameView/GameUI/DefaultDialogueBox"]

@@ -4,51 +4,46 @@ using Godot;
 
 namespace Nova;
 
-public struct ButtonRingItem(string actionI18nName, CompressedTexture2D activeSprite)
+public readonly struct ButtonRingItem(string actionI18nName, CompressedTexture2D activeSprite)
 {
-    public CompressedTexture2D ActiveSprite = activeSprite;
-    public string ActionI18nName = actionI18nName;
+    public readonly CompressedTexture2D ActiveSprite = activeSprite;
+    public readonly string ActionI18nName = actionI18nName;
 }
 
 public partial class ButtonRing : Control
 {
+    [Export]
+    private TextureRect _ringBackground;
+    [Export]
+    private Label _actionNameText;
+    [Export]
+    private float _innerRatio = 0.3f;
+    [Export]
+    private float _angleOffset = 67.5f;
+    [Export]
+    private string _textureFolder = "res://resources/button_ring";
+
     private List<ButtonRingItem> _sectors = [];
     private float _sectorRadius = 200.0f;
-    public float InnerRatio = 0.3f;
-    public float AngleOffset = -67.5f;
     private Vector2 _preCalculatedAnchorPos;
     private int _selectedSectorIndex = -1;
-    private TextureRect _ringBackground;
-    private Label _actionNameText;
 
-
-    public override void _Ready()
+    public override void _EnterTree()
     {
-        _ringBackground = GetNode<TextureRect>("TextureRect");
-        _actionNameText = GetNode<Label>("Label");
-
-        Init();
-    }
-
-    private void Init()
-    {
-        GD.Print("Start Init: ButtonRing");
-        var spritePath = "res://resources/button_ring/";
-
         // The angle of the godot is 0 degrees on the positive x-axis,
         // Clockwise is positive, counterclockwise is negative.
         // In order to adjust the display of the button ring according to the sector index,
-        // We have adjusted the order in which the sectors are added. 
-        _sectors.Add(new(" ", GD.Load<CompressedTexture2D>(spritePath + "button_ring_0.png")));
-        _sectors.Add(new("7", GD.Load<CompressedTexture2D>(spritePath + "button_ring_7.png")));
-        _sectors.Add(new("6", GD.Load<CompressedTexture2D>(spritePath + "button_ring_6.png")));
-        _sectors.Add(new("5", GD.Load<CompressedTexture2D>(spritePath + "button_ring_5.png")));
-        _sectors.Add(new("4", GD.Load<CompressedTexture2D>(spritePath + "button_ring_4.png")));
-        _sectors.Add(new("3", GD.Load<CompressedTexture2D>(spritePath + "button_ring_3.png")));
-        _sectors.Add(new("2", GD.Load<CompressedTexture2D>(spritePath + "button_ring_2.png")));
-        _sectors.Add(new("1", GD.Load<CompressedTexture2D>(spritePath + "button_ring_1.png")));
-        _sectors.Add(new("8", GD.Load<CompressedTexture2D>(spritePath + "button_ring_8.png")));
+        // We have adjusted the order in which the sectors are added.
+        _sectors.Add(new(" ", GD.Load<CompressedTexture2D>($"{_textureFolder}/button_ring_0.png")));
+        for (var i = 8; i >= 1; i--)
+        {
+            var texture = GD.Load<CompressedTexture2D>($"{_textureFolder}/button_ring_{i}.png");
+            _sectors.Add(new(i.ToString(), texture));
+        }
+    }
 
+    public override void _Ready()
+    {
         SwitchSector(0);
     }
 
@@ -65,9 +60,8 @@ public partial class ButtonRing : Control
     /// return relative angle in deg, range from [0, 360), distance will be the distance from pointer to anchor point
     /// </summary>
     /// <returns>return relative angle in deg, range from [0, 360)</returns>
-    public float CalculatePointerRelative(out float distance)
+    public float CalculatePointerAngle(Vector2 pointerPos, out float distance)
     {
-        var pointerPos = RealInput.PointerPosition;
         // var anchorPos = preCalculatedAnchorPos;
         var anchorPos = Position + PivotOffset;
         var diff = pointerPos - anchorPos;
@@ -102,21 +96,28 @@ public partial class ButtonRing : Control
         return index;
     }
 
-    public override void _Process(double delta)
+    public override void _Input(InputEvent @event)
     {
-        var pointerRelativeAngle = CalculatePointerRelative(out var distance);
-        if (float.IsNaN(pointerRelativeAngle)) return;
-
-        if (distance < InnerRatio * _sectorRadius)
+        if (!Visible)
         {
-            _selectedSectorIndex = -1;
-            _actionNameText.Text = "";
+            return;
         }
-        else
+        if (@event is InputEventMouseMotion mouseMotion)
         {
-            _selectedSectorIndex = GetSectorIndexAtAngle(pointerRelativeAngle);
-        }
+            var angle = CalculatePointerAngle(mouseMotion.Position, out var distance);
+            if (float.IsNaN(angle)) return;
 
-        SwitchSector(_selectedSectorIndex + 1);
+            if (distance < _innerRatio * _sectorRadius)
+            {
+                _selectedSectorIndex = -1;
+                _actionNameText.Text = "";
+            }
+            else
+            {
+                _selectedSectorIndex = GetSectorIndexAtAngle(angle + _angleOffset);
+            }
+
+            SwitchSector(_selectedSectorIndex + 1);
+        }
     }
 }

@@ -7,10 +7,13 @@ public partial class GameViewController : ViewController
 {
     [Export]
     private PanelController _gameUI;
+    [Export]
+    private ButtonRingTrigger _buttonRingTrigger;
 
     private GameState _gameState;
     private AnimationState _animation;
     private StateManager _stateManager;
+    private GameViewInput _gameInput;
 
     public DialogueBoxController CurrentDialogueBox { get; set; }
 
@@ -28,6 +31,11 @@ public partial class GameViewController : ViewController
 
         _stateManager = StateManager.Instance;
         _animation = _stateManager.Animation;
+
+        _gameInput = new(this)
+        {
+            ButtonRingTrigger = _buttonRingTrigger
+        };
     }
 
     public override void _ExitTree()
@@ -39,20 +47,16 @@ public partial class GameViewController : ViewController
         _gameState.RouteEnded.Unsubscribe(OnRouteEnded);
     }
 
+    public void Step()
+    {
+        _gameState.Step();
+    }
+
     public override void _GuiInput(InputEvent @event)
     {
-        if (@event is InputEventMouseButton button &&
-            button.ButtonIndex == MouseButton.Left && button.IsPressed())
+        if (@event is InputEventMouseButton mouseButton)
         {
-            if (_animation.IsRunning)
-            {
-                _animation.Stop();
-                _stateManager.SyncImmediate();
-            }
-            else
-            {
-                _gameState.Step();
-            }
+            _gameInput.HandleMouseButton(mouseButton);
         }
     }
 

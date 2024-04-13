@@ -4,23 +4,16 @@ namespace Nova;
 
 public partial class ButtonRingTrigger : Control
 {
+    [Export]
     private ButtonRing _buttonRing;
 
-    public bool ButtonShowing { get; private set; }
+    public bool ButtonShowing => _buttonRing.Visible;
 
-    public override void _Ready()
-    {
-        _buttonRing = GetNode<ButtonRing>("Ring");
-        _buttonRing.Hide();
-    }
-
-    public void ShowRing()
+    public void ShowRing(Vector2 position)
     {
         if (ButtonShowing) return;
-        GD.Print("Show ButtonRing: " + RealInput.MousePosition);
-        AdjustAnchorPosition();
+        AdjustAnchorPosition(position);
         _buttonRing.Show();
-        ButtonShowing = true;
     }
 
     public void HideRing()
@@ -28,7 +21,6 @@ public partial class ButtonRingTrigger : Control
         if (!ButtonShowing) return;
         GD.Print("Hide ButtonRing");
         _buttonRing.Hide();
-        ButtonShowing = false;
     }
 
     public void SetRingPosition(Vector2 position)
@@ -36,9 +28,8 @@ public partial class ButtonRingTrigger : Control
         _buttonRing.Position = position - _buttonRing.PivotOffset;
     }
 
-    private void AdjustAnchorPosition()
+    private void AdjustAnchorPosition(Vector2 position)
     {
-        var currentPointerPos = RealInput.PointerPosition;
-        SetRingPosition(currentPointerPos);
+        SetRingPosition(position);
     }
 }
