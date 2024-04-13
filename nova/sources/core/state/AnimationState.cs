@@ -5,20 +5,6 @@ namespace Nova;
 
 public partial class AnimationState : RefCounted, IStateObject
 {
-    private class RootAnimation : IAnimation
-    {
-        public bool Execute(Tween tween)
-        {
-            tween.TweenInterval(0);
-            return true;
-        }
-
-        public bool ExecuteImmediate()
-        {
-            return true;
-        }
-    }
-
     public readonly AnimationEntry Root;
 
     private readonly List<AnimationEntry> _animations = [];
@@ -28,7 +14,7 @@ public partial class AnimationState : RefCounted, IStateObject
 
     public AnimationState()
     {
-        Root = new(this, new RootAnimation());
+        Root = new(this, new DelayAnimation { Duration = 0 });
         _executor.OnFinish.Subscribe(Clear);
     }
 

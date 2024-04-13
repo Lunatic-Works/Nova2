@@ -10,6 +10,14 @@ public partial class AnimationEntry(AnimationState animationState, IAnimation an
     public readonly List<AnimationEntry> Children = [];
     public Tween Tween = null;
 
+    private AnimationEntry Entry(IAnimation animation)
+    {
+        var entry = new AnimationEntry(_animationState, animation);
+        Children.Add(entry);
+        _animationState.Add(entry);
+        return entry;
+    }
+
     private AnimationEntry Property<[MustBeVariant] T>(GodotObject obj, NodePath property, T to, double duration)
     {
         var animation = new PropertyAnimation<T>()
@@ -20,10 +28,7 @@ public partial class AnimationEntry(AnimationState animationState, IAnimation an
             Duration = duration,
             FromCurrent = true,
         };
-        var entry = new AnimationEntry(_animationState, animation);
-        Children.Add(entry);
-        _animationState.Add(entry);
-        return entry;
+        return Entry(animation);
     }
 
     public AnimationEntry PropertyVector3(GodotObject obj, NodePath property, Vector3 to, double duration)
@@ -39,5 +44,10 @@ public partial class AnimationEntry(AnimationState animationState, IAnimation an
     public AnimationEntry PropertyDouble(GodotObject obj, NodePath property, double to, double duration)
     {
         return Property(obj, property, to, duration);
+    }
+
+    public AnimationEntry Delay(double duration)
+    {
+        return Entry(new DelayAnimation { Duration = duration });
     }
 }
