@@ -36,6 +36,7 @@ public class AnimationExecutor
         }
         _runningPool.Add(entry);
         var tween = Utils.CurrentSceneTree.CreateTween();
+        tween.TweenInterval(0);
         entry.Tween = tween;
         var result = entry.Animation.Execute(tween);
         tween.Finished += () => OnFinishEntry(entry, result);
