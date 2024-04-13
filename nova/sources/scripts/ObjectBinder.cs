@@ -14,6 +14,6 @@ public partial class ObjectBinder : Node
             Utils.Warn($"Empty binding name on {this}");
             return;
         }
-        ObjectManager.Instance.BindObject(_bindName, this);
+        StateManager.Instance.BindPropertyState(_bindName, this);
     }
 }

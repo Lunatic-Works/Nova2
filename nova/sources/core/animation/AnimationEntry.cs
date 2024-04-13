@@ -18,7 +18,8 @@ public partial class AnimationEntry(AnimationState animationState, IAnimation an
         return entry;
     }
 
-    private AnimationEntry Property<[MustBeVariant] T>(GodotObject obj, NodePath property, T to, double duration)
+    private AnimationEntry Property<[MustBeVariant] T>(PropertyState obj, StringName property, T to,
+        double duration, bool relative)
     {
         var animation = new PropertyAnimation<T>()
         {
@@ -26,24 +27,27 @@ public partial class AnimationEntry(AnimationState animationState, IAnimation an
             Property = property,
             To = to,
             Duration = duration,
-            FromCurrent = true,
+            Relative = relative,
         };
         return Entry(animation);
     }
 
-    public AnimationEntry PropertyVector3(GodotObject obj, NodePath property, Vector3 to, double duration)
+    public AnimationEntry PropertyVector3(PropertyState obj, StringName property, Vector3 to,
+        double duration, bool relative)
     {
-        return Property(obj, property, to, duration);
+        return Property(obj, property, to, duration, relative);
     }
 
-    public AnimationEntry PropertyColor(GodotObject obj, NodePath property, Color to, double duration)
+    public AnimationEntry PropertyColor(PropertyState obj, StringName property, Color to,
+        double duration, bool relative)
     {
-        return Property(obj, property, to, duration);
+        return Property(obj, property, to, duration, relative);
     }
 
-    public AnimationEntry PropertyDouble(GodotObject obj, NodePath property, double to, double duration)
+    public AnimationEntry PropertyDouble(PropertyState obj, StringName property, double to,
+        double duration, bool relative)
     {
-        return Property(obj, property, to, duration);
+        return Property(obj, property, to, duration, relative);
     }
 
     public AnimationEntry Delay(double duration)
