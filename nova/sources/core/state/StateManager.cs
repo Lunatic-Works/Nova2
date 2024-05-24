@@ -63,9 +63,8 @@ public class StateManager : ISingleton
         }
     }
 
-    public void BindPropertyState(string name, GodotObject obj)
+    public void BindPropertyState(string name, PropertyState state)
     {
-        var state = new PropertyState(obj);
         _states.Add(state);
         _objectManager.BindObject(name, state);
     }

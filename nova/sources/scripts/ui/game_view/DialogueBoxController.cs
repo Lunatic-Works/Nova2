@@ -60,7 +60,11 @@ public partial class DialogueBoxController : PanelController
 
     public override void _EnterTree()
     {
-        StateManager.Instance.BindPropertyState(_bindName, this);
+        var state = new PropertyState(this)
+        {
+            InitProperties = ["Opacity", "BackgroundColor", "TextColor"]
+        };
+        StateManager.Instance.BindPropertyState(_bindName, state);
     }
 
     public override void _Ready()
