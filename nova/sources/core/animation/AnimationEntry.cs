@@ -3,12 +3,19 @@ using Godot;
 
 namespace Nova;
 
-public partial class AnimationEntry(AnimationState animationState, IAnimation animation) : RefCounted
+public partial class AnimationEntry : RefCounted
 {
-    private readonly AnimationState _animationState = animationState;
-    public readonly IAnimation Animation = animation;
+    private readonly AnimationState _animationState;
+    public readonly IAnimation Animation;
     public readonly List<AnimationEntry> Children = [];
     public Tween Tween = null;
+
+    private AnimationEntry(AnimationState animationState, IAnimation animation)
+    {
+        _animationState = animationState;
+        Animation = animation;
+        animation.Init();
+    }
 
     private AnimationEntry Entry(IAnimation animation)
     {
@@ -53,5 +60,10 @@ public partial class AnimationEntry(AnimationState animationState, IAnimation an
     public AnimationEntry Delay(double duration)
     {
         return Entry(new DelayAnimation { Duration = duration });
+    }
+
+    public static AnimationEntry Root(AnimationState state)
+    {
+        return new AnimationEntry(state, new DelayAnimation { Duration = 0 });
     }
 }

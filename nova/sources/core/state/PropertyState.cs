@@ -8,16 +8,18 @@ public partial class PropertyState : RefCounted, IStateObject
 {
     public readonly GodotObject Binding;
 
-    private readonly Dictionary<StringName, Variant> _dirtyProperties = [];
     private readonly Dictionary<StringName, Variant> _properties = [];
+    private readonly HashSet<StringName> _dirtyProperties = [];
+    private readonly Dictionary<StringName, Variant> _holdingProperties = [];
     private readonly Godot.Collections.Array<Godot.Collections.Dictionary> _propertyList;
-    private readonly HashSet<string> _propertyNames;
+    private readonly HashSet<StringName> _propertyNames;
 
     public PropertyState(GodotObject binding)
     {
         Binding = binding;
         _propertyList = binding.GetPropertyList();
-        _propertyNames = _propertyList.Select(entry => entry["name"].AsString()).ToHashSet();
+        _propertyNames = _propertyList.Select(
+            entry => entry["name"].AsStringName()).ToHashSet();
     }
 
     private void AddProperty(StringName key, Variant value)
@@ -36,7 +38,7 @@ public partial class PropertyState : RefCounted, IStateObject
             _propertyNames.Add(key);
         }
         _properties.Add(key, value);
-        _dirtyProperties.Add(key, value);
+        _dirtyProperties.Add(key);
     }
 
     public Variant this[StringName key] { init => AddProperty(key, value); }
@@ -54,35 +56,49 @@ public partial class PropertyState : RefCounted, IStateObject
 
     public void Sync()
     {
-        foreach (var entry in _dirtyProperties)
+        var refreshed = new List<StringName>();
+        foreach (var key in _dirtyProperties)
         {
-            GD.Print($"Sync {Binding}.{entry.Key} = {entry.Value}");
-            Binding.Set(entry.Key, entry.Value);
+            if (!_holdingProperties.TryGetValue(key, out var value))
+            {
+                value = _properties[key];
+                refreshed.Add(key);
+            }
+            GD.Print($"Sync {Binding}.{key} = {value}");
+            Binding.Set(key, value);
         }
-        _dirtyProperties.Clear();
+        _dirtyProperties.ExceptWith(refreshed);
     }
 
     public void SyncImmediate()
     {
+        _holdingProperties.Clear();
         Sync();
     }
 
-    // do nothing during sync backend
     public void SyncBackend() { }
 
-    public override Variant _Get(StringName property)
+    public void Hold(StringName key)
     {
-        if (_properties.TryGetValue(property, out var value))
+        var value = Get(key);
+        GD.Print($"Hold {Binding}.{key} = {value}");
+        _holdingProperties.Add(key, value);
+    }
+
+    public override Variant _Get(StringName key)
+    {
+        if (_properties.TryGetValue(key, out var value))
         {
             return value;
         }
-        return Binding.Get(property);
+        return Binding.Get(key);
     }
 
-    public override bool _Set(StringName property, Variant value)
+    public override bool _Set(StringName key, Variant value)
     {
-        _dirtyProperties[property] = value;
-        _properties[property] = value;
+        GD.Print($"Set {Binding}.{key} = {value}");
+        _properties[key] = value;
+        _dirtyProperties.Add(key);
         return true;
     }
 

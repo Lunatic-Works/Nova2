@@ -6,6 +6,7 @@ namespace Nova;
 public partial class AnimationState : RefCounted, IStateObject
 {
     public readonly AnimationEntry Root;
+    public readonly Event OnFinish = new();
 
     private readonly List<AnimationEntry> _animations = [];
     private readonly AnimationExecutor _executor = new();
@@ -14,14 +15,15 @@ public partial class AnimationState : RefCounted, IStateObject
 
     public AnimationState()
     {
-        Root = new(this, new DelayAnimation { Duration = 0 });
-        _executor.OnFinish.Subscribe(Clear);
+        Root = AnimationEntry.Root(this);
+        _executor.OnFinish.Subscribe(Finish);
     }
 
-    private void Clear()
+    private void Finish()
     {
         _animations.Clear();
         Root.Children.Clear();
+        OnFinish.Invoke();
     }
 
     public void Add(AnimationEntry entry)
@@ -34,18 +36,23 @@ public partial class AnimationState : RefCounted, IStateObject
         _executor.Stop();
     }
 
-    public void Sync()
+    public void Play()
     {
         _executor.EnqueueAnimation(Root);
     }
 
+    public void Sync()
+    {
+        Play();
+    }
+
     public void SyncImmediate()
     {
-        _executor.ExecuteImmediate(Root);
+        Stop();
     }
 
     public void SyncBackend()
     {
-        SyncImmediate();
+        Stop();
     }
 }
