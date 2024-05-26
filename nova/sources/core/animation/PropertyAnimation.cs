@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Godot;
 
 namespace Nova;
@@ -11,7 +12,10 @@ public class PropertyAnimation<[MustBeVariant] T> : IAnimation
     public double Duration { get; init; }
     public bool Relative { get; init; }
 
-    private void GetFromTo(out Variant from, out Variant to)
+    private Variant _fromAbsolute;
+    private Variant _toAbsolute;
+
+    public void Init()
     {
         var fromT = Object.Get(Property).As<T>();
         var toT = To;
@@ -19,24 +23,19 @@ public class PropertyAnimation<[MustBeVariant] T> : IAnimation
         {
             toT += (dynamic)fromT;
         }
-        from = Variant.From(fromT);
-        to = Variant.From(toT);
+        _fromAbsolute = Variant.From(fromT);
+        _toAbsolute = Variant.From(toT);
+        GD.Print($"Init Tween {Object.Binding}.{Property} {_fromAbsolute} -> {_toAbsolute}");
+        Object.Hold(Property);
+        Object.Set(Property, _toAbsolute);
     }
 
     public bool Execute(Tween tween)
     {
-        GetFromTo(out var from, out var to);
-        GD.Print($"Tween {Object.Binding}.{Property} {from} -> {to}");
-        var tweener = tween.TweenProperty(Object.Binding, Property.ToString(), to, Duration);
-        tweener.From(from);
-        return true;
-    }
-
-    public bool ExecuteImmediate()
-    {
-        GetFromTo(out _, out var to);
-        GD.Print($"Set {Object.Binding}.{Property} = {to}");
-        Object.Set(Property, to);
+        GD.Print($"Tween {Object.Binding}.{Property} {_fromAbsolute} -> {_toAbsolute}");
+        var tweener = tween.TweenProperty(Object.Binding, Property.ToString(),
+            _toAbsolute, Duration);
+        tweener.From(_fromAbsolute);
         return true;
     }
 }

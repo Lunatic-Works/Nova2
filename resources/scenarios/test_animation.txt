@@ -16,7 +16,7 @@ show("fg", "foregrounds/moon_halo", [0, 0, 0.2])
 <|
 o.anim.PropertyVector3(o.fg, "position", Vector3(1, 1, 0), 0.5, false)  \
     .PropertyVector3(o.fg, "scale", Vector3(0.3, 0.3, 0.3), 0.5, false) \
-    .PropertyVector3(o.fg, "rotation", Vector3(0, 0, 2), 1, false)
+    .PropertyVector3(o.fg, "rotation_degrees", Vector3(0, 0, 45), 1, false)
 |>
 顺序播放动画
 
@@ -32,7 +32,7 @@ move("fg", [0, 0, 0.2, 0, 0])
 tint("fg", [1, 1, 1, 1])
 o.anim.PropertyVector3(o.fg, "position", Vector3(1, 1, 0), 0.5, false)  \
     .PropertyVector3(o.fg, "scale", Vector3(0.3, 0.3, 0.3), 0.5, false) \
-    .PropertyVector3(o.fg, "rotation", Vector3(0, 0, 2), 1, false)
+    .PropertyVector3(o.fg, "rotation_degrees", Vector3(0, 0, 45), 1, false)
 |>
 移动之后再播放动画
 

@@ -19,6 +19,7 @@ public class StateManager : ISingleton
 
         _objectManager = ObjectManager.Instance;
         Animation = new AnimationState();
+        Animation.OnFinish.Subscribe(SyncImmediate);
         _states.Add(Animation);
         _objectManager.BindObject("anim", Animation.Root);
     }
@@ -37,6 +38,7 @@ public class StateManager : ISingleton
 
     public void SyncImmediate()
     {
+        GD.Print("Sync Immediate");
         foreach (var state in _states)
         {
             state.SyncImmediate();
@@ -45,6 +47,7 @@ public class StateManager : ISingleton
 
     public void Sync()
     {
+        GD.Print("Sync");
         foreach (var state in _states)
         {
             state.Sync();
