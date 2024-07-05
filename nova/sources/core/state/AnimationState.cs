@@ -46,13 +46,7 @@ public partial class AnimationState : RefCounted, IStateObject
         Play();
     }
 
-    public void SyncImmediate()
-    {
-        Stop();
-    }
+    public void SyncImmediate() { }
 
-    public void SyncBackend()
-    {
-        Stop();
-    }
+    public void SyncBackend() { }
 }

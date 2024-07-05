@@ -56,6 +56,17 @@ public partial class GameViewController : ViewController
     {
         if (@event is InputEventMouseButton mouseButton)
         {
+            if (mouseButton.ButtonIndex == MouseButton.Left && mouseButton.IsPressed())
+            {
+                if (_animation.IsRunning)
+                {
+                    _animation.Stop();
+                }
+                else
+                {
+                    _gameState.Step();
+                }
+            }
             _gameInput.HandleMouseButton(mouseButton);
         }
     }
