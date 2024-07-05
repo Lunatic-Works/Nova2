@@ -1,15 +1,21 @@
 using System.Collections.Generic;
+using Godot;
 
 namespace Nova;
 
 public class AnimationExecutor
 {
     private readonly HashSet<AnimationEntry> _runningPool = [];
+    private bool _isStopping = false;
 
     public readonly Event OnFinish = new();
 
     private void OnFinishEntry(AnimationEntry entry, bool result)
     {
+        if (_isStopping)
+        {
+            return;
+        }
         _runningPool.Remove(entry);
         entry.Tween = null;
         if (result)
@@ -41,9 +47,10 @@ public class AnimationExecutor
 
     public void Stop()
     {
+        _isStopping = true;
         foreach (var entry in _runningPool)
         {
-            entry.Tween.Kill();
+            entry.Tween?.Kill();
             entry.Tween = null;
         }
         if (_runningPool.Count > 0)
@@ -51,5 +58,6 @@ public class AnimationExecutor
             OnFinish.Invoke();
         }
         _runningPool.Clear();
+        _isStopping = false;
     }
 }

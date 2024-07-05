@@ -47,7 +47,6 @@ public partial class GameViewController : ViewController
             if (_animation.IsRunning)
             {
                 _animation.Stop();
-                _stateManager.SyncImmediate();
             }
             else
             {
