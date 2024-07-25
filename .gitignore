@@ -14,5 +14,8 @@ export_presets.cfg
 data_*/
 mono_crash.*.json
 
-# vscode
+# VSCode
 .vscode/
+
+# Visual Studio
+.vs/
