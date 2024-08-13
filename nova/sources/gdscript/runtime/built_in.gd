@@ -6,10 +6,12 @@ static func _static_init():
 	var tree: SceneTree = Engine.get_main_loop()
 	_nova = tree.root.get_node("NovaController")
 
+#@export
 static var o: Dictionary:
 	get:
 		return _nova.ObjectManager.Objects
 
+#@export
 static var c: Dictionary:
 	get:
 		return _nova.ObjectManager.Constants

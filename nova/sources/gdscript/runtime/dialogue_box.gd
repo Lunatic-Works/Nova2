@@ -1,4 +1,4 @@
-class_name DialogueBox
+class_name DialogueBox extends BuiltIn
 
 static var box_pos_presets: Dictionary = {
 	bottom = {
@@ -34,7 +34,7 @@ static var box_pos_presets: Dictionary = {
 static func set_box(pos_name="bottom"):
 	var pos = box_pos_presets[pos_name];
 
-	var box = BuiltIn.o[pos.box] if pos.get("box") != null else null
+	var box = o[pos.box] if pos.get("box") != null else null
 
 	if box != null:
 		var anchor = pos.get("anchor", [0, 1, 0, 1])
@@ -49,6 +49,6 @@ static func set_box(pos_name="bottom"):
 		box.offset_top = offset[2]
 		box.offset_bottom = offset[3]
 
-	BuiltIn._nova.GameViewController.SwitchDialogueBox(box, true)
+	_nova.GameViewController.SwitchDialogueBox(box, true)
 
 static var set_box_l = set_box

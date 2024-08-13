@@ -2,17 +2,25 @@
 
 class_name RuntimeBlock extends BaseBlock
 
+## BuiltIn
+static var o:
+	get: return BuiltIn.o
+	set(value): BuiltIn.o = value
+static var c:
+	get: return BuiltIn.c
+	set(value): BuiltIn.c = value
+
 ## DialogueBox
-static func set_box(pos_name="bottom"):
+func set_box(pos_name="bottom"):
 	DialogueBox.set_box(pos_name)
 
 ## Graphics
-static func move(obj: Variant, coord: Variant, scale=null, angle=null):
+func move(obj: Variant, coord: Variant, scale=null, angle=null):
 	Graphics.move(obj, coord, scale, angle)
-static func tint(obj, color):
+func tint(obj, color):
 	Graphics.tint(obj, color)
-static func show(obj, image_path, coord=null, color=null):
+func show(obj, image_path, coord=null, color=null):
 	Graphics.show(obj, image_path, coord, color)
-static func hide(obj):
+func hide(obj):
 	Graphics.hide(obj)
 
