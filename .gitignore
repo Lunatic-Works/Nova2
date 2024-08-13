@@ -19,3 +19,6 @@ mono_crash.*.json
 
 # Visual Studio
 .vs/
+
+# IdeaJ
+.idea/*

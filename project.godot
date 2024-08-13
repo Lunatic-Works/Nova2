@@ -27,6 +27,10 @@ window/stretch/mode="canvas_items"
 
 project/assembly_name="Nova"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/nova_macro/plugin.cfg")
+
 [rendering]
 
 renderer/rendering_method="mobile"

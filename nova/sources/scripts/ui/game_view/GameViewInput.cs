@@ -14,7 +14,6 @@ public class GameViewInput
     public GameViewInput(GameViewController gameView)
     {
         _gameView = gameView;
-
     }
 
     private void ClickForward()

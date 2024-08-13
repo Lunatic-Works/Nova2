@@ -1,7 +1,7 @@
 class_name LazyBlock extends RuntimeBlock
 
 func __eval() -> void:
-    pass
+	pass
 
 func run() -> void:
-    __eval()
+	__eval()
