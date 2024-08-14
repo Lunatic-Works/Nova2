@@ -97,6 +97,7 @@ public partial class NovaController : Node
 		var type = typeof(T);
 		var obj = (T)_objects[type];
 		TryInit(type, obj);
+        GD.Print($"Get obj: {type}");
 		return obj;
 	}
 
@@ -118,4 +119,6 @@ public partial class NovaController : Node
 
 	public GameViewController GameViewController =>
 		GetObj<ViewManager>().GetController<GameViewController>();
+
+    public ScriptLoader ScriptLoader => _objects[typeof(ScriptLoader)] as ScriptLoader;
 }

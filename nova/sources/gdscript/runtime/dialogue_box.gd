@@ -30,6 +30,45 @@ static var box_pos_presets: Dictionary = {
 	},
 }
 
+static var box_style_presets: Dictionary = {
+	light = {
+		tint = 1,
+		alignment = "left",
+		text_color = 0,
+		text_material = '',
+	},
+	center = {
+		tint = 1,
+		alignment = "center",
+		text_color = 0,
+		text_material = '',
+	},
+	dark = {
+		tint = [0, 0.5],
+		alignment = "left",
+		text_color = 1,
+		text_material = "outline",
+	},
+	dark_center = {
+		tint = [0, 0.5],
+		alignment = "center",
+		text_color = 1,
+		text_material = "outline",
+	},
+	transparent = {
+		tint = [0, 0],
+		alignment = "left",
+		text_color = 1,
+		text_material = "outline",
+	},
+	subtitle = {
+		tint = [0, 0],
+		alignment = "center",
+		text_color = 1,
+		text_material = "outline",
+	},
+}
+
 #@export
 static func set_box(pos_name="bottom"):
 	var pos = box_pos_presets[pos_name];
@@ -50,5 +89,3 @@ static func set_box(pos_name="bottom"):
 		box.offset_bottom = offset[3]
 
 	_nova.GameViewController.SwitchDialogueBox(box, true)
-
-static var set_box_l = set_box

@@ -1,7 +1,7 @@
-class_name BaseBlock extends RefCounted
+class_name BaseBlock extends RuntimeBlock
 
-func pop_prefix(s: String, prefix: String, sep_len: int=0) -> Array:
-	if s.begins_with(prefix):
-		return [prefix, s.substr(prefix.length() + sep_len)]
-	else:
-		return [null, s]
+func __eval() -> void:
+	push_error("Must override __eval in child")
+	
+func run() -> void:
+	__eval()

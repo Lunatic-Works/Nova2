@@ -42,6 +42,8 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
         _flowChartGraph.Unfreeze();
         _flowChartGraph.Clear();
 
+        GDRuntime.BaseRuntimeBlock.Set("_script_loader", this);
+
         foreach (var locale in I18n.SupportedLocales)
         {
             _currentLocale = locale;
@@ -59,7 +61,7 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
 
             foreach (var fileName in DirAccess.GetFilesAt(localizedPath))
             {
-                GDRuntime.BaseEagerBlock.Call("action_new_file", fileName);
+                GDRuntime.BaseRuntimeBlock.Call("action_new_file", fileName);
                 var script = Utils.GetFileAsText(localizedPath + "/" + fileName);
                 try
                 {
@@ -204,8 +206,8 @@ public partial class ScriptLoader(string path) : RefCounted, ISingleton
     /// <param name="code"></param>
     private void DoEagerExecutionBlock(string code)
     {
-        var script = GDRuntime.CompileEagerBlock(code);
-        script.Call("run", this);
+        var script = GDRuntime.CompileBaseBlock(code);
+        script.Call("run");
     }
 
     #region Methods called by external scripts

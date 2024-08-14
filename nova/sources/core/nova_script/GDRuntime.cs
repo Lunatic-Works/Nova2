@@ -5,8 +5,7 @@ namespace Nova;
 
 public static class GDRuntime
 {
-    private const string LazyBlockBaseScript = "res://nova/sources/gdscript/lazy_block.gd";
-    private const string EagerBlockBaseScript = "res://nova/sources/gdscript/eager_block.gd";
+    private const string RuntimeBlockScript = "res://nova/sources/gdscript/runtime_block.gd";
     private static readonly Dictionary<string, RefCounted> s_cachedScript = [];
 
     private static RefCounted GetScript(string path)
@@ -19,8 +18,7 @@ public static class GDRuntime
         return script;
     }
 
-    public static RefCounted BaseLazyBlock => GetScript(LazyBlockBaseScript);
-    public static RefCounted BaseEagerBlock => GetScript(EagerBlockBaseScript);
+    public static RefCounted BaseRuntimeBlock => GetScript(RuntimeBlockScript);
 
     private static RefCounted Compile(string script)
     {
@@ -40,14 +38,9 @@ public static class GDRuntime
         return $"extends {baseClass}\nfunc __eval():\n    return {script.Trim()}\n";
     }
 
-    public static RefCounted CompileLazyBlock(string script)
+    public static RefCounted CompileBaseBlock(string script)
     {
-        return Compile(WrapStatements("LazyBlock", script));
-    }
-
-    public static RefCounted CompileEagerBlock(string script)
-    {
-        return Compile(WrapStatements("EagerBlock", script));
+        return Compile(WrapStatements("BaseBlock", script));
     }
 
     public static RefCounted CompileCondition(string expression)

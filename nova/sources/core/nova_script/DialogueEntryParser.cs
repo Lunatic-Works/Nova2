@@ -81,11 +81,10 @@ public static class DialogueEntryParser
                 {
                     continue;
                 }
-                actions.Add(stage, GDRuntime.BaseLazyBlock);
             }
             else
             {
-                var action = GDRuntime.CompileLazyBlock(code);
+                var action = GDRuntime.CompileBaseBlock(code);
                 actions.Add(stage, action);
             }
         }

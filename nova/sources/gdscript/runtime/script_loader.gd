@@ -1,16 +1,19 @@
-class_name EagerBlock extends BaseBlock
-
-var _script_loader: RefCounted
+class_name ScriptLoader extends BuiltIn
 
 static var _last_display_name = null
 static var _current_filename = null
 
-func action_new_file(filename: String) -> void:
+static var _script_loader: RefCounted
+static func _static_init():
+	_script_loader = _nova.ScriptLoader
+
+#@export
+static func action_new_file(filename: String) -> void:
 	_current_filename = filename
 	_last_display_name = null
 	print_rich("[color=green]Run eager block for file: [/color][b]%s[/b]" % filename)
 
-func _try_get_local_name(name):
+static func _try_get_local_name(name):
 	if name == null:
 		return null
 
@@ -21,7 +24,8 @@ func _try_get_local_name(name):
 		return name
 
 ## define a node
-func label(name: String, display_name=null) -> void:
+#@export
+static func label(name: String, display_name=null) -> void:
 	if display_name == null:
 		if _last_display_name == null:
 			display_name = name
@@ -39,7 +43,8 @@ func label(name: String, display_name=null) -> void:
 
 ## jump to the given destination
 ## should be called at the end of the node
-func jump_to(dest: String) -> void:
+#@export
+static func jump_to(dest: String) -> void:
 	dest = _try_get_local_name(dest)
 	_script_loader.RegisterJump(dest)
 
@@ -54,7 +59,8 @@ func jump_to(dest: String) -> void:
 ##    mode: "normal|jump|show|enable", optional, default is normal
 ##    cond: an expression string that returns a bool, should not use if mode is show
 ## }
-func branch(branches: Array) -> void:
+#@export
+static func branch(branches: Array) -> void:
 	for i in branches.size():
 		var entry = branches[i]
 
@@ -72,24 +78,28 @@ func branch(branches: Array) -> void:
 	_script_loader.EndRegisterBranch()
 
 ## set the current node as a chapter
-func is_chapter() -> void:
+#@export
+static func is_chapter() -> void:
 	_script_loader.SetCurrentAsChapter()
 
 ## set the current node as a start node
 ## a game can have multiple start points
 ## which means this function can be called several times under different nodes
-func is_start() -> void:
+#@export
+static func is_start() -> void:
 	_script_loader.SetCurrentAsStart()
 
 ## set the current node as a start point which is unlocked initially
 ## indicates is_chapter() and is_start()
-func is_unlocked_start() -> void:
+#@export
+static func is_unlocked_start() -> void:
 	_script_loader.SetCurrentAsChapter()
 	_script_loader.SetCurrentAsUnlockedStart()
 
 ## set the current node as a debug node
 ## debug nodes can be entered by holding debug key in start game
-func is_debug() -> void:
+#@export
+static func is_debug() -> void:
 	_script_loader.SetCurrentAsDebug()
 
 ## set the current node as an end node
@@ -99,13 +109,7 @@ func is_debug() -> void:
 ## if no name is given, the name of the current node will be used
 ## all nodes without child nodes should be marked as end nodes
 ## if is_end() is not called under those nodes, they will be marked as end nodes automatically
-func is_end(name=null) -> void:
+#@export
+static func is_end(name=null) -> void:
 	name = _try_get_local_name(name)
 	_script_loader.SetCurrentAsEnd(name)
-
-func __eval() -> void:
-	push_error("Must override __eval in child")
-
-func run(script_loader: RefCounted) -> void:
-	_script_loader = script_loader
-	__eval()

@@ -5,6 +5,7 @@ static var _nova: Node
 static func _static_init():
 	var tree: SceneTree = Engine.get_main_loop()
 	_nova = tree.root.get_node("NovaController")
+	print("Script Init", _nova.ObjectManager)
 
 #@export
 static var o: Dictionary:
@@ -21,7 +22,7 @@ static func _get_obj(obj: Variant) -> Variant:
 		return o[obj]
 	return obj
 
-static func _get_index(arr: Array, index: int, default=null):
+static func _get_index(arr: Array, index: int, default=null) -> Variant:
 	return arr[index] if index < len(arr) and arr[index] != null else default
 
 static func _get_vec3(input, default: Vector3, single_default=null) -> Vector3:
@@ -36,3 +37,10 @@ static func _get_vec3(input, default: Vector3, single_default=null) -> Vector3:
 		return Vector3(x, y, z)
 	else:
 		return default
+
+#@export
+static func pop_prefix(s: String, prefix: String, sep_len: int=0) -> Array:
+	if s.begins_with(prefix):
+		return [prefix, s.substr(prefix.length() + sep_len)]
+	else:
+		return [null, s]
